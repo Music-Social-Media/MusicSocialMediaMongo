@@ -13,9 +13,12 @@ public class UserController {
 
     @GetMapping("/")
     public String index() {
+        User user = new User("zahra", "1234");
+        userRepository.insert(user);
+
 //        userRepository.save(new User("zahra", "1234"));
-        for (User user : userRepository.findAll())
-            System.out.println(user);
+//        for (User user : userRepository.findAll())
+//            System.out.println(user);
         return "index";
     }
 }
