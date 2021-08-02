@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collation = "album")
+@Document
 public class Album {
     @Id
     private String albumID;
@@ -53,8 +53,8 @@ public class Album {
     //    @DBRef
 //    private List<Artist> compiles = new ArrayList<>();
 //
-//    @DBRef
-//    private List<Media> contain = new ArrayList<>();
+    @DBRef
+    private List<Media> contain = new ArrayList<>();
 //
 //    public Album() {
 //
@@ -124,9 +124,9 @@ public class Album {
 //        this.compiles = compiles;
 //    }
 //
-//    public List<Media> getContain() {
-//        return contain;
-//    }
+    public List<Media> getContain() {
+        return contain;
+    }
 //
 //    public void setContain(List<Media> contain) {
 //        this.contain = contain;

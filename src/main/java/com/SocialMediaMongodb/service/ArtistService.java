@@ -19,9 +19,9 @@ public class ArtistService {
     }
 
     public Artist getArtist(String id) {
-        Optional<Artist> resource = artistRepository.findById(id);
-        if (resource.isPresent())
-            return resource.get();
+        Optional<Artist> artist = artistRepository.findById(id);
+        if (artist.isPresent())
+            return artist.get();
         else
             return null;
 

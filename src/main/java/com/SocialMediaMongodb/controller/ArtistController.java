@@ -74,7 +74,7 @@ public class ArtistController {
         return model;
     }
 
-    @GetMapping(path = "/artist/{id}")
+    @GetMapping(path = "/artist/get/{id}")
     public ModelAndView getArtist(@PathVariable("id") String id) {
         ModelAndView model = new ModelAndView();
         Artist artist = artistService.getArtist(id);

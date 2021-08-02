@@ -26,6 +26,7 @@ public class MediaService {
     }
 
     public List<Media> getMediaByAlbumID(String id) {
+        System.out.println("jjj"+mediaRepository.findByAlbumID(id));
         var medias = (List<Media>) mediaRepository.findByAlbumID(id);
         return medias;
     }

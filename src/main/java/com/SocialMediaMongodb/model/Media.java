@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collation = "media")
+@Document
 public class Media {
     @Id
     private String mediaID;
@@ -20,7 +20,7 @@ public class Media {
     private String path;
 
     private Artist artist;
-    private Album album;
+//    private Album album;
 
     public Artist getArtist() {
         return artist;
@@ -30,13 +30,13 @@ public class Media {
         this.artist = artist;
     }
 
-    public Album getAlbum() {
-        return album;
-    }
-
-    public void setAlbum(Album album) {
-        this.album = album;
-    }
+//    public Album getAlbum() {
+//        return album;
+//    }
+//
+//    public void setAlbum(Album album) {
+//        this.album = album;
+//    }
 
     //    @DBRef
 //    private List<User> likes = new ArrayList<>();
@@ -51,7 +51,7 @@ public class Media {
 
     }
 
-    public Media(String name, int score, String genre, int length, String publishDate, String path, Artist artist, Album album) {
+    public Media(String name, int score, String genre, int length, String publishDate, String path, Artist artist) {
         this.name = name;
         this.score = score;
         this.genre = genre;
@@ -59,7 +59,6 @@ public class Media {
         this.publishDate = publishDate;
         this.path = path;
         this.artist = artist;
-        this.album = album;
     }
 
     public Media(String name, int score, String genre, int length, String publishDate, String path) {
@@ -152,16 +151,30 @@ public class Media {
 //        this.album = album;
 //    }
 
+//    @Override
+//    public String toString() {
+//        return "Media{" +
+//                "mediaID=" + mediaID +
+//                ", name='" + name + '\'' +
+//                ", score=" + score +
+//                ", genre='" + genre + '\'' +
+//                ", length=" + length +
+//                ", publishDate='" + publishDate + '\'' +
+//                ", path='" + path + '\'' +
+//                '}';
+//    }
+
     @Override
     public String toString() {
         return "Media{" +
-                "mediaID=" + mediaID +
+                "mediaID='" + mediaID + '\'' +
                 ", name='" + name + '\'' +
                 ", score=" + score +
                 ", genre='" + genre + '\'' +
                 ", length=" + length +
                 ", publishDate='" + publishDate + '\'' +
                 ", path='" + path + '\'' +
+                ", artist=" + artist +
                 '}';
     }
 }

@@ -2,6 +2,7 @@ package com.SocialMediaMongodb.service;
 
 import com.SocialMediaMongodb.model.Album;
 import com.SocialMediaMongodb.model.Media;
+import com.SocialMediaMongodb.model.User;
 import com.SocialMediaMongodb.repository.AlbumRepository;
 import com.SocialMediaMongodb.repository.MediaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +31,7 @@ public class AlbumService {
     }
 
     public Album getAlbumByName(String name) {
-        Optional<Album> album = Optional.ofNullable(albumRepository.findByName(name));
-        if (album.isPresent())
-            return album.get();
-        else
-            return null;
+        return albumRepository.findByName(name);
     }
 
     public void addOrUpdateAlbum(Album album) {

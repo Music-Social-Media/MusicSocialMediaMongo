@@ -66,11 +66,12 @@ public class AlbumController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/album/{id}")
+    @GetMapping("/album/get/{id}")
     public ModelAndView getAlbum(@PathVariable("id") String id) {
         ModelAndView model = new ModelAndView();
         Album album = albumService.getAlbum(id);
-//        System.out.println(album.toString());
+        System.out.println("---" + album.toString());
+        System.out.println("id:::" + id);
 
         List<Media> media = mediaService.getMediaByAlbumID(id);
         System.out.println(media.toString());

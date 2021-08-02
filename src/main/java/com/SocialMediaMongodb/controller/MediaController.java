@@ -34,8 +34,11 @@ public class MediaController {
 
     @Autowired
     private MediaService mediaService;
+    @Autowired
     private UserService userService;
+    @Autowired
     private ArtistService artistService;
+    @Autowired
     private AlbumService albumService;
 
     @RequestMapping("/media/getAll")
@@ -72,7 +75,7 @@ public class MediaController {
         Media media = mediaService.getMedia(id);
         System.out.println("media: " + media.toString());
         if (media == null)
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity(null, HttpStatus.NOT_FOUND);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/json"))
@@ -129,17 +132,18 @@ public class MediaController {
             Path path = Paths.get(BASE_DIR + file.getOriginalFilename());
             Files.write(path, file.getBytes());
 
-            Album album = albumService.getAlbumByName(albumName);
+//            Album album = albumService.getAlbumByName(albumName);
             Artist artist = artistService.getArtist(artistID);
 //            Artist artist = artistService.getArtistByName(artistName.split(" ")[0], artistName.split(" ")[1]);
-            if (album == null && artist == null) {
-                System.out.println("The required media or artist is not exists !!");
-                return new ResponseEntity(HttpStatus.NOT_FOUND);
-            }
+//            if (album == null && artist == null) {
+//                System.out.println("The required media or artist is not exists !!");
+//                return new ResponseEntity(HttpStatus.NOT_FOUND);
+//            }
 
             Media uploadMedia = new Media();
             uploadMedia.setName(mediaName);
-            uploadMedia.setAlbum(album);
+            uploadMedia.setArtist(artist);
+//            uploadMedia.setAlbum(album);
             uploadMedia.setArtist(artist);
             uploadMedia.setLength((int) file.getSize());
             uploadMedia.setGenre(genre);
