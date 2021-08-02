@@ -1,37 +1,94 @@
 package com.SocialMediaMongodb.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collation = "user")
+import java.util.ArrayList;
+import java.util.List;
+
+//@Document(collation = "user")
+@Document
 public class User {
     @Id
-    public String id;
-    public String userName;
-    public String password;
+    private String userID;
+    private String firstname;
+    private String lastname;
+    private String picture;
+    private String biography;
+    private String username;
+    private String password;
+    private String email;
+
+    @DBRef
+    private List<Media> likeMedia = new ArrayList<>();
+
+    @DBRef
+    private List<Media> viewMedia = new ArrayList<>();
+
+    @DBRef
+    private List<Artist> followArtist = new ArrayList<>();
+
 
     public User() {
     }
 
-    public User(String userName, String password) {
-        this.userName = userName;
+    public User(String firstname, String lastname, String picture, String biography, String username, String password, String email) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.picture = picture;
+        this.biography = biography;
+        this.username = username;
         this.password = password;
+        this.email = email;
     }
 
-    public String getId() {
-        return id;
+    public String getUserID() {
+        return userID;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public String getBiography() {
+        return biography;
+    }
+
+    public void setBiography(String biography) {
+        this.biography = biography;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -42,12 +99,49 @@ public class User {
         this.password = password;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public List<Media> getLikeMedia() {
+        return likeMedia;
+    }
+
+    public void setLikeMedia(List<Media> likeMedia) {
+        this.likeMedia = likeMedia;
+    }
+
+    public List<Media> getViewMedia() {
+        return viewMedia;
+    }
+
+    public void setViewMedia(List<Media> viewMedia) {
+        this.viewMedia = viewMedia;
+    }
+
+    public List<Artist> getFollowArtist() {
+        return followArtist;
+    }
+
+    public void setFollowArtist(List<Artist> followArtist) {
+        this.followArtist = followArtist;
+    }
+
     @Override
     public String toString() {
         return "User{" +
-                "id='" + id + '\'' +
-                ", userName='" + userName + '\'' +
+                "userID=" + userID +
+                ", firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", picture='" + picture + '\'' +
+                ", biography='" + biography + '\'' +
+                ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
                 '}';
     }
 }
