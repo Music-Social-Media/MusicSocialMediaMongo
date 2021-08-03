@@ -19,7 +19,7 @@ import java.util.List;
 @Controller
 public class ArtistController {
 
-    private static final String ALBUM_IMG_DIR = "src/main/resources/uploads/";
+    private static final String ALBUM_IMG_DIR = "src/main/resources/static/uploads/";
 
     @Autowired
     private SocialMediaService service;
@@ -32,14 +32,14 @@ public class ArtistController {
         Files.write(path, file.getBytes());
 
         if (service.findArtistNOTDuplicate(firstName, lastName, birthDate)) {
-            Artist artist = new Artist(firstName, lastName, ALBUM_IMG_DIR + file.getOriginalFilename(), biography, birthDate);
+            Artist artist = new Artist(firstName, lastName, "static/uploads/" + file.getOriginalFilename(), biography, birthDate);
             service.addOrUpdateArtist(artist);
             return new ResponseEntity<>(artist, HttpStatus.OK);
         } else
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
 
-    @PostMapping("/artist/update/{id}")
+    @PutMapping("/artist/update/{id}")
     public ResponseEntity UpdateArtist(@PathVariable("id") String id, @RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName,
                                        @RequestParam("biography") String biography, @RequestParam("birthDate") String birthDate) {
         Artist artist = service.getArtist(id);
@@ -54,11 +54,11 @@ public class ArtistController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/artist/delete/{id}")
+    @DeleteMapping("/artist/delete/{id}")
     public ResponseEntity deleteArtist(@PathVariable("id") String id) {
         boolean response = service.deleteArtist(id);
         if (response)
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>("artist deleted successfully!", HttpStatus.OK);
         else
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -74,15 +74,30 @@ public class ArtistController {
         return model;
     }
 
+    @GetMapping(path = "/rest/artists")
+    public ResponseEntity getAllArtistsRest() {
+        List<Artist> artists = service.getAllArtist();
+        return new ResponseEntity<>(artists, HttpStatus.OK);
+    }
+
     @GetMapping(path = "/artist/get/{id}")
     public ModelAndView getArtist(@PathVariable("id") String id) {
         ModelAndView model = new ModelAndView();
         Artist artist = service.getArtist(id);
 
+        System.out.println(artist.toString());
         model.addObject("artist", artist);
         model.setViewName("artist");
 
         return model;
+    }
+
+    @GetMapping(path = "/rest/artist/get/{id}")
+    public ResponseEntity getArtistRest(@PathVariable("id") String id) {
+        Artist artist = service.getArtist(id);
+        if (artist != null)
+            return new ResponseEntity<>(artist, HttpStatus.OK);
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
 }

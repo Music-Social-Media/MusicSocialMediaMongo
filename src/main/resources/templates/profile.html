@@ -8,7 +8,25 @@
     <link rel="stylesheet" th:href="@{/css/header.css}">
     <link rel="stylesheet" th:href="@{/css/style2.css}"/>
     <link rel="stylesheet" th:href="@{/css/plugins.css}"/>
-
+    <header class="header-section clearfix">
+        <a th:href="@{/}" class="site-logo">
+            <img th:src="@{/img/logo.png}" alt="">
+        </a>
+        <div class="header-right">
+            <div class="user-panel">
+                <a th:href="@{/login}" class="login" th:text="${userName} ?: 'Login'"></a>
+                <span>|</span>
+                <a th:href="@{/signup}" class="register">Create an account</a>
+            </div>
+        </div>
+        <ul class="main-menu">
+            <li><a th:href="@{/}">Home</a></li>
+            <li><a th:href="@{/albums}">Albums</a></li>
+            <li><a th:href="@{/medias}">Playlist</a></li>
+            <li><a th:href="@{/artists}">Artists</a></li>
+            <li><a th:href="@{/likedMedia}">Favourite</a></li>
+        </ul>
+    </header>
 </head>
 <body>
 <div class="hero user-hero">

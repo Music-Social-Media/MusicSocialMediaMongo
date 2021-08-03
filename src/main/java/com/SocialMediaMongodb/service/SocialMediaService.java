@@ -45,33 +45,19 @@ public class SocialMediaService {
     }
 
 
-    public void addUser(User resource) {
-        userRepository.save(resource);
+    public void addOrUpdateUser(User user) {
+        userRepository.save(user);
     }
 
-//    public boolean deleteUser(String id) {
-//        Optional<User> user = userRepository.findById(id);
-//        if (user.isPresent()) {
-//            userRepository.deleteById(id);
-//            return true;
-//        } else
-//            return false;
-//    }
-
-    public void updateUser(User user) {
-        if (user.getUserID() == null)
-            userRepository.save(user);
-        else {
-            Optional<User> existingUser = userRepository.findById(user.getUserID());
-            if (existingUser.isPresent()) {
-                User newUser = existingUser.get();
-                newUser.setFirstname(user.getFirstname());
-                newUser.setLastname(user.getLastname());
-                newUser.setPassword(user.getPassword());
-                userRepository.save(newUser);
-            }
-        }
+    public boolean deleteUser(String id) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            userRepository.deleteById(id);
+            return true;
+        } else
+            return false;
     }
+
     // *******************************Artist******************************* //
 
     public List<Artist> getAllArtist() {
@@ -160,14 +146,12 @@ public class SocialMediaService {
     }
 
     public List<Media> getMediaByAlbumID(String id) {
-        System.out.println("jjj" + mediaRepository.findByAlbumID(id));
         var medias = (List<Media>) mediaRepository.findByAlbumID(id);
         return medias;
     }
 
     public void addOrUpdateMedia(Media media) {
-        if (media != null)
-            mediaRepository.save(media);
+        mediaRepository.save(media);
     }
 
     public boolean deleteMedia(String id) {
@@ -179,22 +163,5 @@ public class SocialMediaService {
             return false;
 
     }
-//
-//    public void updateMedia(Media media) {
-//        if (media.getMediaID() == null)
-//            mediaRepository.save(media);
-//        else {
-//            Optional<Media> existingMedia = mediaRepository.findById(media.getMediaID());
-//            if (existingMedia.isPresent()) {
-//                Media newMedia = existingMedia.get();
-//                newMedia.setName(media.getName());
-//                newMedia.setGenre(media.getGenre());
-//                newMedia.setPublishDate(media.getPublishDate());
-//                newMedia.setLength(media.getLength());
-//                newMedia.setScore(media.getScore());
-//                mediaRepository.save(newMedia);
-//            }
-//        }
-//    }
 
 }

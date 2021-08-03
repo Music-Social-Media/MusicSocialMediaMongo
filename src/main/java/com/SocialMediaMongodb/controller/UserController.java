@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,8 +18,18 @@ public class UserController {
     private SocialMediaService service;
 
     @GetMapping("/")
-    public String index() {
-        return "index";
+    public ModelAndView index(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String userName = null, userID = (String) session.getAttribute("userID");
+        if (userID != null) {
+            User user = service.getUser(userID);
+            userName = user.getUsername();
+        }
+
+        ModelAndView model = new ModelAndView();
+        model.addObject("userName", userName);
+        model.setViewName("index");
+        return model;
     }
 
     @GetMapping("/login")
@@ -38,13 +46,12 @@ public class UserController {
     public String registerUser(HttpServletRequest request, @RequestParam("username") String username,
                                @RequestParam("email") String email, @RequestParam("password") String password) {
         User isExitUser = service.getUserByEmail(email);
-        System.out.println("iiiiii" + isExitUser.toString());
         if (isExitUser == null) {
             User newUser = new User();
             newUser.setEmail(email);
             newUser.setPassword(password);
             newUser.setUsername(username);
-            service.addUser(newUser);
+            service.addOrUpdateUser(newUser);
 
             HttpSession session = request.getSession();
             session.setAttribute("userID", service.getUserByEmail(email).getUserID());
@@ -56,7 +63,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/rest/user/signup")
+    @PostMapping(value = "/rest/user/signup")
     public ResponseEntity registerUserRest(HttpServletRequest request, @RequestParam("username") String username,
                                            @RequestParam("email") String email, @RequestParam("password") String password) {
         User isExitUser = service.getUserByEmail(email);
@@ -65,7 +72,7 @@ public class UserController {
             newUser.setEmail(email);
             newUser.setPassword(password);
             newUser.setUsername(username);
-            service.addUser(newUser);
+            service.addOrUpdateUser(newUser);
 
             HttpSession session = request.getSession();
             session.setAttribute("userID", service.getUserByEmail(email).getUserID());
@@ -78,17 +85,21 @@ public class UserController {
     }
 
     @RequestMapping(value = "/user/login")
-    public String loginUser(HttpServletRequest request) {
+    public ModelAndView loginUser(HttpServletRequest request) {
+        ModelAndView model = new ModelAndView();
         User isExitUser = service.getUserByEmail(request.getParameter("email"));
+
         if (isExitUser != null && isExitUser.getPassword().equals(request.getParameter("password"))) {
-            HttpSession session = request.getSession();
-            session.setAttribute("userID", isExitUser.getUserID());
-            return "index";
-        } else
-            return "login";
+            model.addObject("userName", isExitUser.getUsername());
+            model.setViewName("index");
+            return model;
+        }
+        model.setViewName("login");
+        return model;
+
     }
 
-    @RequestMapping(value = "/rest/user/login")
+    @PostMapping(value = "/rest/user/login")
     public ResponseEntity loginUserRest(HttpServletRequest request) {
         User isExitUser = service.getUserByEmail(request.getParameter("email"));
         if (isExitUser != null && isExitUser.getPassword().equals(request.getParameter("password"))) {
@@ -116,7 +127,9 @@ public class UserController {
     public ResponseEntity profileRest(HttpServletRequest request) {
         HttpSession session = request.getSession();
         User user = service.getUser((String) session.getAttribute("userID"));
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        if (user != null)
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/user/changePassword")
@@ -130,38 +143,31 @@ public class UserController {
         return model;
     }
 
-    @GetMapping("/rest/user/changePassword")
-    public ResponseEntity userEditPasswordRest(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        User user = service.getUser((String) session.getAttribute("userID"));
-
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-
     @RequestMapping("/user/edit")
     public String updateUser(@RequestParam("id") String id, @RequestParam("firstName") String firstName,
-                             @RequestParam("lastName") String lastName) {
-        User user = service.getUser(id);
-        if (user != null) {
-            user.setFirstname(firstName);
-            user.setLastname(lastName);
-//            user.setBiography(biography);
-            service.updateUser(user);
-        }
-        return "profile";
-    }
-
-    @RequestMapping("rest/user/edit")
-    public ResponseEntity updateUserRest(@RequestParam("id") String id, @RequestParam("firstName") String firstName,
-                                 @RequestParam("lastName") String lastName, @RequestParam("biography") String biography) {
+                             @RequestParam("lastName") String lastName, @RequestParam("biography") String biography) {
         User user = service.getUser(id);
         if (user != null) {
             user.setFirstname(firstName);
             user.setLastname(lastName);
             user.setBiography(biography);
-            service.updateUser(user);
+            service.addOrUpdateUser(user);
         }
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        return "profile";
+    }
+
+    @PutMapping("/rest/user/edit")
+    public ResponseEntity updateUserRest(@RequestParam("id") String id, @RequestParam("firstName") String firstName,
+                                         @RequestParam("lastName") String lastName, @RequestParam("biography") String biography) {
+        User user = service.getUser(id);
+        if (user != null) {
+            user.setFirstname(firstName);
+            user.setLastname(lastName);
+            user.setBiography(biography);
+            service.addOrUpdateUser(user);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 
     @RequestMapping("/changePassword")
@@ -172,14 +178,36 @@ public class UserController {
         System.out.println(user.toString());
         if (user != null && user.getPassword().equals(currentPassword) && password.equals(repeatNewPassword)) {
             user.setPassword(password);
-            service.updateUser(user);
+            service.addOrUpdateUser(user);
         }
         return "changePassword";
     }
 
-    @RequestMapping("/user/getAll")
-    public String getAllUsers() {
-        System.out.println(service.getAllUser());
-        return "index";
+    @PutMapping("/rest/changePassword")
+    public ResponseEntity changePasswordRest(HttpServletRequest request, @RequestParam("currentPassword") String currentPassword, @RequestParam("password") String password,
+                                             @RequestParam("repeatNewPassword") String repeatNewPassword) {
+        HttpSession session = request.getSession();
+        User user = service.getUser((String) session.getAttribute("userID"));
+
+        if (user != null && user.getPassword().equals(currentPassword) && password.equals(repeatNewPassword)) {
+            user.setPassword(password);
+            service.addOrUpdateUser(user);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/user/getAll")
+    public ResponseEntity getAllUsers() {
+        return new ResponseEntity<>(service.getAllUser(), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/user/delete/{id}")
+    public ResponseEntity deleteUser(@PathVariable("id") String id) {
+        boolean response = service.deleteUser(id);
+        if (response)
+            return new ResponseEntity<>("user deleted successfully!", HttpStatus.OK);
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+
     }
 }

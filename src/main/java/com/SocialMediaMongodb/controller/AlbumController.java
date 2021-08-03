@@ -45,7 +45,7 @@ public class AlbumController {
     public ResponseEntity deleteAlbum(@PathVariable("id") String id) {
         boolean flag = service.deleteAlbum(id);
         if (flag)
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>("album deleted successfully!", HttpStatus.OK);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -69,11 +69,8 @@ public class AlbumController {
     public ModelAndView getAlbum(@PathVariable("id") String id) {
         ModelAndView model = new ModelAndView();
         Album album = service.getAlbum(id);
-        System.out.println("---" + album.toString());
-        System.out.println("id:::" + id);
 
         List<Media> media = service.getMediaByAlbumID(id);
-        System.out.println(media.toString());
         model.addObject("album", album);
         if (media.size() > 0)
             model.addObject("media", media.get(0));
@@ -81,6 +78,12 @@ public class AlbumController {
         model.setViewName("album");
 
         return model;
+    }
+
+    @GetMapping("/rest/album/get/{id}")
+    public ResponseEntity getAlbumRest(@PathVariable("id") String id) {
+        Album album = service.getAlbum(id);
+        return new ResponseEntity(album, HttpStatus.OK);
     }
 
     @GetMapping("/albums")
@@ -91,5 +94,10 @@ public class AlbumController {
         model.addObject("albums", albums);
         model.setViewName("albums");
         return model;
+    }
+
+    @GetMapping("/rest/albums")
+    public ResponseEntity getAllAlbumRest() {
+        return new ResponseEntity(service.getAllAlbum(), HttpStatus.OK);
     }
 }

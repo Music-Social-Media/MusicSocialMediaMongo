@@ -1,5 +1,5 @@
-<html xmlns:th="http://www.w3.org/1999/xhtml">
 <!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
 <html lang="zxx">
 <head>
     <title>Music Social Media</title>
@@ -30,39 +30,24 @@
 
 </head>
 <body>
-<!-- Page Preloder -->
-<div id="preloder">
-    <div class="loader"></div>
-</div>
-
 <!-- Header section -->
 <header class="header-section clearfix">
-    <a class="site-logo">
-        <img src="img/logo.png" alt="">
+    <a th:href="@{/}" class="site-logo">
+        <img th:src="@{/img/logo.png}" alt="">
     </a>
     <div class="header-right">
-        <a href="#" class="hr-btn">Help</a>
-        <span>|</span>
         <div class="user-panel">
-            <a href="" class="login">Login</a>
-            <a href="" class="register">Create an account</a>
+            <a th:href="@{/login}" class="login" th:text="${userName} ?: 'Login'"></a>
+            <span>|</span>
+            <a th:href="@{/signup}" class="register">Create an account</a>
         </div>
     </div>
     <ul class="main-menu">
-        <li><a href="index
-				.html">Home</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Pages</a>
-            <ul class="sub-menu">
-                <li><a href="category.html">Category</a></li>
-                <li><a href="playlist.html">Playlist</a></li>
-                <li><a href="artist.html">Artist</a></li>
-                <li><a href="blog.html">Blog</a></li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
-        </li>
-        <li><a href="blog.html">News</a></li>
-        <li><a href="contact.html">Contact</a></li>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/albums}">Albums</a></li>
+        <li><a th:href="@{/medias}">Playlist</a></li>
+        <li><a th:href="@{/artists}">Artists</a></li>
+        <li><a th:href="@{/likedMedia}">Favourite</a></li>
     </ul>
 </header>
 <!-- Header section end -->
@@ -74,8 +59,10 @@
         <div class="row">
             <div th:each="artist : ${artists}" class="col-xl-3 col-sm-6">
                 <div class="similar-song">
-                    <img th:href="@{/artist/{artist.artistID}(artist.artistID=${artist.artistID})}" class="ss-thumb" th:src="${artist.picture}" alt="">
-                    <a th:href="@{/artist/{artist.artistID}(artist.artistID=${artist.artistID})}"><h4 th:text="${artist.firstname} + ${artist.lastname}"></h4></a>
+                    <img th:href="@{/artist/get/{artist.artistID}(artist.artistID=${artist.artistID})}" class="ss-thumb"
+                         th:src="${artist.picture}" alt="">
+                    <a th:href="@{/artist/get/{artist.artistID}(artist.artistID=${artist.artistID})}"><h4
+                            th:text="${artist.firstname} + ' ' + ${artist.lastname}"></h4></a>
                 </div>
             </div>
         </div>
