@@ -2,8 +2,7 @@ package com.SocialMediaMongodb.controller;
 
 import com.SocialMediaMongodb.model.Album;
 import com.SocialMediaMongodb.model.Media;
-import com.SocialMediaMongodb.service.AlbumService;
-import com.SocialMediaMongodb.service.MediaService;
+import com.SocialMediaMongodb.service.SocialMediaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +24,8 @@ public class AlbumController {
     private static final String ALBUM_IMG_DIR = "src/main/resources/uploads/";
 
     @Autowired
-    private AlbumService albumService;
-    private MediaService mediaService;
+    private SocialMediaService service;
+
 
     @PostMapping("/album/add")
     public ResponseEntity addAlbum(@RequestParam("file") MultipartFile file, @RequestParam("name") String name, @RequestParam("genre") String genre) throws IOException {
@@ -37,14 +36,14 @@ public class AlbumController {
         Files.write(path, file.getBytes());
 
         Album album = new Album(name, formatter.format(date), 0, genre, ALBUM_IMG_DIR + file.getOriginalFilename());
-        albumService.addOrUpdateAlbum(album);
+        service.addOrUpdateAlbum(album);
 
         return new ResponseEntity<>(album, HttpStatus.OK);
     }
 
     @DeleteMapping("/album/delete/{id}")
     public ResponseEntity deleteAlbum(@PathVariable("id") String id) {
-        boolean flag = albumService.deleteAlbum(id);
+        boolean flag = service.deleteAlbum(id);
         if (flag)
             return new ResponseEntity<>(HttpStatus.OK);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -54,13 +53,13 @@ public class AlbumController {
     public ResponseEntity updateAlbum(@PathVariable("id") String id, @RequestParam("albumName") String albumName,
                                       @RequestParam("genre") String genre, @RequestParam("score") int score,
                                       @RequestParam("publishDate") String publishDate) {
-        Album album = albumService.getAlbum(id);
+        Album album = service.getAlbum(id);
         if (album != null) {
             album.setName(albumName);
             album.setGenre(genre);
             album.setScore(score);
             album.setPublishDate(publishDate);
-            albumService.addOrUpdateAlbum(album);
+            service.addOrUpdateAlbum(album);
             return new ResponseEntity(album, HttpStatus.OK);
         }
         return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -69,11 +68,11 @@ public class AlbumController {
     @GetMapping("/album/get/{id}")
     public ModelAndView getAlbum(@PathVariable("id") String id) {
         ModelAndView model = new ModelAndView();
-        Album album = albumService.getAlbum(id);
+        Album album = service.getAlbum(id);
         System.out.println("---" + album.toString());
         System.out.println("id:::" + id);
 
-        List<Media> media = mediaService.getMediaByAlbumID(id);
+        List<Media> media = service.getMediaByAlbumID(id);
         System.out.println(media.toString());
         model.addObject("album", album);
         if (media.size() > 0)
@@ -87,7 +86,7 @@ public class AlbumController {
     @GetMapping("/albums")
     public ModelAndView getAllAlbum() {
         ModelAndView model = new ModelAndView();
-        List<Album> albums = albumService.getAllAlbum();
+        List<Album> albums = service.getAllAlbum();
 
         model.addObject("albums", albums);
         model.setViewName("albums");

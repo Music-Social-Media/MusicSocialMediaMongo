@@ -19,46 +19,18 @@ public class Media {
     private String publishDate;
     private String path;
 
-    private Artist artist;
-//    private Album album;
 
-    public Artist getArtist() {
-        return artist;
-    }
+    @DBRef
+    private List<User> likes = new ArrayList<>();
 
-    public void setArtist(Artist artist) {
-        this.artist = artist;
-    }
+    @DBRef
+    private List<User> views = new ArrayList<>();
 
-//    public Album getAlbum() {
-//        return album;
-//    }
-//
-//    public void setAlbum(Album album) {
-//        this.album = album;
-//    }
-
-    //    @DBRef
-//    private List<User> likes = new ArrayList<>();
-//
-//    @DBRef
-//    private List<User> views = new ArrayList<>();
-//
-//    @DBRef
-//    private Album album = new Album();
+    @DBRef
+    private Album album = new Album();
 
     public Media() {
 
-    }
-
-    public Media(String name, int score, String genre, int length, String publishDate, String path, Artist artist) {
-        this.name = name;
-        this.score = score;
-        this.genre = genre;
-        this.length = length;
-        this.publishDate = publishDate;
-        this.path = path;
-        this.artist = artist;
     }
 
     public Media(String name, int score, String genre, int length, String publishDate, String path) {
@@ -127,42 +99,25 @@ public class Media {
         this.path = path;
     }
 
-//    public List<User> getLikes() {
-//        return likes;
-//    }
-//
-//    public void setLikes(List<User> likes) {
-//        this.likes = likes;
-//    }
-//
-//    public List<User> getViews() {
-//        return views;
-//    }
-//
-//    public void setViews(List<User> views) {
-//        this.views = views;
-//    }
-//
-//    public Album getAlbum() {
-//        return album;
-//    }
-//
-//    public void setAlbum(Album album) {
-//        this.album = album;
-//    }
+    public List<User> getLikes() {
+        return likes;
+    }
 
-//    @Override
-//    public String toString() {
-//        return "Media{" +
-//                "mediaID=" + mediaID +
-//                ", name='" + name + '\'' +
-//                ", score=" + score +
-//                ", genre='" + genre + '\'' +
-//                ", length=" + length +
-//                ", publishDate='" + publishDate + '\'' +
-//                ", path='" + path + '\'' +
-//                '}';
-//    }
+    public List<User> getViews() {
+        return views;
+    }
+
+    public void setLikes(User user) {
+        if (!likes.contains(user))
+            likes.add(user);
+    }
+
+
+    public void setViews(User user) {
+        if (!views.contains(user))
+            views.add(user);
+    }
+
 
     @Override
     public String toString() {
@@ -174,7 +129,6 @@ public class Media {
                 ", length=" + length +
                 ", publishDate='" + publishDate + '\'' +
                 ", path='" + path + '\'' +
-                ", artist=" + artist +
                 '}';
     }
 }

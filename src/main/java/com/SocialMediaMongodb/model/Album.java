@@ -18,47 +18,17 @@ public class Album {
     private String genre;
     private String picture;
 
-    //    private List media;
-//    private Artist artist;
 
     public Album() {
     }
 
-//    public Album(String name, String publishDate, int score, String genre, String picture) {
-//        this.name = name;
-//        this.publishDate = publishDate;
-//        this.score = score;
-//        this.genre = genre;
-//        this.picture = picture;
-////        this.media = media;
-////        this.artist = artist;
-//    }
 
-//    public List getMedia() {
-//        return media;
-//    }
-//
-//    public void setMedia(List media) {
-//        this.media = media;
-//    }
+    @DBRef
+    private List<Artist> compiles = new ArrayList<>();
 
-//    public Artist getArtist() {
-//        return artist;
-//    }
-//
-//    public void setArtist(Artist artist) {
-//        this.artist = artist;
-//    }
-
-    //    @DBRef
-//    private List<Artist> compiles = new ArrayList<>();
-//
     @DBRef
     private List<Media> contain = new ArrayList<>();
-//
-//    public Album() {
-//
-//    }
+
 
     public Album(String name, String publishDate, int score, String genre, String picture) {
         this.name = name;
@@ -116,21 +86,24 @@ public class Album {
         this.picture = picture;
     }
 
-//    public List<Artist> getCompiles() {
-//        return compiles;
-//    }
-//
-//    public void setCompiles(List<Artist> compiles) {
-//        this.compiles = compiles;
-//    }
-//
+    public List<Artist> getCompiles() {
+        return compiles;
+    }
+
+    public void setCompiles(Artist artist) {
+        if (!compiles.contains(artist))
+            compiles.add(artist);
+    }
+
     public List<Media> getContain() {
         return contain;
     }
-//
-//    public void setContain(List<Media> contain) {
-//        this.contain = contain;
-//    }
+
+
+    public void setContain(Media media) {
+        if (!contain.contains(media))
+            contain.add(media);
+    }
 
     @Override
     public String toString() {

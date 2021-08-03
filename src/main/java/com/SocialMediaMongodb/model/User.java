@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 import java.util.List;
 
-//@Document(collation = "user")
 @Document
 public class User {
     @Id
@@ -119,16 +118,18 @@ public class User {
         return viewMedia;
     }
 
-    public void setViewMedia(List<Media> viewMedia) {
-        this.viewMedia = viewMedia;
+    public void setViewMedia(Media media) {
+        if (!viewMedia.contains(media))
+            viewMedia.add(media);
     }
 
     public List<Artist> getFollowArtist() {
         return followArtist;
     }
 
-    public void setFollowArtist(List<Artist> followArtist) {
-        this.followArtist = followArtist;
+    public void setFollowArtist(Artist artist) {
+        if (!followArtist.contains(artist))
+            followArtist.add(artist);
     }
 
     @Override

@@ -4,10 +4,7 @@ import com.SocialMediaMongodb.model.Album;
 import com.SocialMediaMongodb.model.Artist;
 import com.SocialMediaMongodb.model.Media;
 import com.SocialMediaMongodb.model.User;
-import com.SocialMediaMongodb.service.AlbumService;
-import com.SocialMediaMongodb.service.ArtistService;
-import com.SocialMediaMongodb.service.MediaService;
-import com.SocialMediaMongodb.service.UserService;
+import com.SocialMediaMongodb.service.SocialMediaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -33,18 +30,13 @@ public class MediaController {
     private static final String BASE_DIR = "src/main/resources/static/music-files/";
 
     @Autowired
-    private MediaService mediaService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private ArtistService artistService;
-    @Autowired
-    private AlbumService albumService;
+    private SocialMediaService service;
+
 
     @RequestMapping("/media/getAll")
     public ModelAndView getAllMedia() {
         ModelAndView model = new ModelAndView();
-        List<Media> medias = mediaService.getAllMedia();
+        List<Media> medias = service.getAllMedia();
 
         model.addObject("medias", medias);
         model.setViewName("medias");
@@ -57,7 +49,7 @@ public class MediaController {
         int viewCount = setView((String) session.getAttribute("userID"), id);
 
         ModelAndView model = new ModelAndView();
-        Media media = mediaService.getMedia(id);
+        Media media = service.getMedia(id);
         System.out.println(media.toString());
 
         model.addObject("media", media);
@@ -72,7 +64,7 @@ public class MediaController {
         HttpSession session = request.getSession();
         int viewCount = setView((String) session.getAttribute("userID"), id);
 
-        Media media = mediaService.getMedia(id);
+        Media media = service.getMedia(id);
         System.out.println("media: " + media.toString());
         if (media == null)
             return new ResponseEntity(null, HttpStatus.NOT_FOUND);
@@ -84,20 +76,20 @@ public class MediaController {
     }
 
     public int setView(String userID, String mediaID) {
-        User user = userService.getUser(userID);
-        Media media = mediaService.getMedia(mediaID);
+        User user = service.getUser(userID);
+        Media media = service.getMedia(mediaID);
 
         List view = user.getViewMedia();
 //        view.add(media);
 //        user.setViewMedia(media);
-        userService.updateUser(user);
+        service.updateUser(user);
 
         return view.size();
     }
 
     @GetMapping("/media/download/{id}")
     public ResponseEntity downloadMedia(@PathVariable String id) throws IOException {
-        Media media = mediaService.getMedia(id);
+        Media media = service.getMedia(id);
         String mediaName = media.getName();
 
         Path path = Paths.get(BASE_DIR + media.getPath());
@@ -132,19 +124,15 @@ public class MediaController {
             Path path = Paths.get(BASE_DIR + file.getOriginalFilename());
             Files.write(path, file.getBytes());
 
-//            Album album = albumService.getAlbumByName(albumName);
-            Artist artist = artistService.getArtist(artistID);
-//            Artist artist = artistService.getArtistByName(artistName.split(" ")[0], artistName.split(" ")[1]);
-//            if (album == null && artist == null) {
-//                System.out.println("The required media or artist is not exists !!");
-//                return new ResponseEntity(HttpStatus.NOT_FOUND);
-//            }
+            Album album = service.getAlbumByName(albumName);
+            Artist artist = service.getArtist(artistID);
+            if (album == null && artist == null) {
+                System.out.println("The required media or artist is not exists !!");
+                return new ResponseEntity(HttpStatus.NOT_FOUND);
+            }
 
             Media uploadMedia = new Media();
             uploadMedia.setName(mediaName);
-            uploadMedia.setArtist(artist);
-//            uploadMedia.setAlbum(album);
-            uploadMedia.setArtist(artist);
             uploadMedia.setLength((int) file.getSize());
             uploadMedia.setGenre(genre);
             uploadMedia.setPath(file.getOriginalFilename());
@@ -154,11 +142,11 @@ public class MediaController {
             uploadMedia.setPublishDate(formatter.format(date));
 
 
-//            if (artist != null)
-//                album.setCompiles(artist);
+            if (artist != null)
+                album.setCompiles(artist);
 
 
-            mediaService.addOrUpdateMedia(uploadMedia);
+            service.addOrUpdateMedia(uploadMedia);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -167,7 +155,7 @@ public class MediaController {
 
     @RequestMapping(value = "/media/delete/{id}")
     public ResponseEntity deleteMedia(@PathVariable("id") String id) {
-        boolean response = mediaService.deleteMedia(id);
+        boolean response = service.deleteMedia(id);
         if (response)
             return new ResponseEntity<>(HttpStatus.OK);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -177,14 +165,14 @@ public class MediaController {
     public ResponseEntity updateMedia(@PathVariable("id") String id, @RequestParam("score") int score,
                                       @RequestParam("name") String name, @RequestParam("genre") String genre,
                                       @RequestParam("length") int length, @RequestParam("publishDate") String publishDate) {
-        Media media = mediaService.getMedia(id);
+        Media media = service.getMedia(id);
         if (media != null) {
             media.setName(name);
             media.setGenre(genre);
             media.setLength(length);
             media.setPublishDate(publishDate);
             media.setScore(score);
-            mediaService.addOrUpdateMedia(media);
+            service.addOrUpdateMedia(media);
             return new ResponseEntity(HttpStatus.OK);
         }
         return new ResponseEntity(HttpStatus.NO_CONTENT);

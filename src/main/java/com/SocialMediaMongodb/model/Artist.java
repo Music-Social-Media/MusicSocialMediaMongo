@@ -18,11 +18,11 @@ public class Artist {
     private String biography;
     private String birthdate;
 
-//    @DBRef
-//    private List<User> follows = new ArrayList<>();
-//
-//    @DBRef
-//    private List<Album> compileAlbum = new ArrayList<>();
+    @DBRef
+    private List<User> follows = new ArrayList<>();
+
+    @DBRef
+    private List<Album> compileAlbum = new ArrayList<>();
 
 
 
@@ -86,21 +86,24 @@ public class Artist {
         this.birthdate = birthdate;
     }
 
-//    public List<User> getFollows() {
-//        return follows;
-//    }
-//
-//    public void setFollows(List<User> follows) {
-//        this.follows = follows;
-//    }
-//
-//    public List<Album> getCompileAlbum() {
-//        return compileAlbum;
-//    }
-//
-//    public void setCompileAlbum(List<Album> compileAlbum) {
-//        this.compileAlbum = compileAlbum;
-//    }
+    public List<User> getFollows() {
+        return follows;
+    }
+
+    public void setFollowAlbum(User user) {
+        if (!follows.contains(user))
+            follows.add(user);
+    }
+
+    public List<Album> getCompileAlbum() {
+        return compileAlbum;
+    }
+
+    public void setCompileAlbum(Album album) {
+        if (!compileAlbum.contains(album))
+            compileAlbum.add(album);
+    }
+
 
     @Override
     public String toString() {

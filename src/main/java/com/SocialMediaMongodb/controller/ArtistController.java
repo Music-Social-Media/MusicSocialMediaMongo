@@ -1,7 +1,7 @@
 package com.SocialMediaMongodb.controller;
 
 import com.SocialMediaMongodb.model.Artist;
-import com.SocialMediaMongodb.service.ArtistService;
+import com.SocialMediaMongodb.service.SocialMediaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ public class ArtistController {
     private static final String ALBUM_IMG_DIR = "src/main/resources/uploads/";
 
     @Autowired
-    private ArtistService artistService;
+    private SocialMediaService service;
 
     @PostMapping("/artist/add")
     public ResponseEntity addArtist(@RequestParam("file") MultipartFile file,
@@ -31,9 +31,9 @@ public class ArtistController {
         Path path = Paths.get(ALBUM_IMG_DIR + file.getOriginalFilename());
         Files.write(path, file.getBytes());
 
-        if (artistService.findArtistNOTDuplicate(firstName, lastName, birthDate)) {
+        if (service.findArtistNOTDuplicate(firstName, lastName, birthDate)) {
             Artist artist = new Artist(firstName, lastName, ALBUM_IMG_DIR + file.getOriginalFilename(), biography, birthDate);
-            artistService.addOrUpdateArtist(artist);
+            service.addOrUpdateArtist(artist);
             return new ResponseEntity<>(artist, HttpStatus.OK);
         } else
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
@@ -42,12 +42,12 @@ public class ArtistController {
     @PostMapping("/artist/update/{id}")
     public ResponseEntity UpdateArtist(@PathVariable("id") String id, @RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName,
                                        @RequestParam("biography") String biography, @RequestParam("birthDate") String birthDate) {
-        Artist artist = artistService.getArtist(id);
+        Artist artist = service.getArtist(id);
         artist.setFirstname(firstName);
         artist.setLastname(lastName);
         artist.setBiography(biography);
         artist.setBirthdate(birthDate);
-        boolean response = artistService.addOrUpdateArtist(artist);
+        boolean response = service.addOrUpdateArtist(artist);
         if (response)
             return new ResponseEntity<>(artist, HttpStatus.OK);
         else
@@ -56,7 +56,7 @@ public class ArtistController {
 
     @PostMapping("/artist/delete/{id}")
     public ResponseEntity deleteArtist(@PathVariable("id") String id) {
-        boolean response = artistService.deleteArtist(id);
+        boolean response = service.deleteArtist(id);
         if (response)
             return new ResponseEntity<>(HttpStatus.OK);
         else
@@ -67,7 +67,7 @@ public class ArtistController {
     public @ResponseBody
     ModelAndView getAllArtists() {
         ModelAndView model = new ModelAndView();
-        List<Artist> artists = artistService.getAllArtist();
+        List<Artist> artists = service.getAllArtist();
 
         model.addObject("artists", artists);
         model.setViewName("artists");
@@ -77,7 +77,7 @@ public class ArtistController {
     @GetMapping(path = "/artist/get/{id}")
     public ModelAndView getArtist(@PathVariable("id") String id) {
         ModelAndView model = new ModelAndView();
-        Artist artist = artistService.getArtist(id);
+        Artist artist = service.getArtist(id);
 
         model.addObject("artist", artist);
         model.setViewName("artist");
