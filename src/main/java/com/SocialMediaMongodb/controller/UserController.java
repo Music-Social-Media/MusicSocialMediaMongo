@@ -43,9 +43,11 @@ public class UserController {
     }
 
     @RequestMapping(value = "/user/signup")
-    public String registerUser(HttpServletRequest request, @RequestParam("username") String username,
-                               @RequestParam("email") String email, @RequestParam("password") String password) {
+    public ModelAndView registerUser(HttpServletRequest request, @RequestParam("username") String username,
+                                     @RequestParam("email") String email, @RequestParam("password") String password) {
+        ModelAndView model = new ModelAndView();
         User isExitUser = service.getUserByEmail(email);
+
         if (isExitUser == null) {
             User newUser = new User();
             newUser.setEmail(email);
@@ -56,11 +58,11 @@ public class UserController {
             HttpSession session = request.getSession();
             session.setAttribute("userID", service.getUserByEmail(email).getUserID());
 
-            return "index";
-        } else {
-            System.out.println("User Already exists!");
-            return "signup";
+            model.addObject("userName", username);
+            model.setViewName("index");
         }
+        model.setViewName("signup");
+        return model;
     }
 
     @PostMapping(value = "/rest/user/signup")
@@ -118,6 +120,7 @@ public class UserController {
 
         ModelAndView model = new ModelAndView();
         model.addObject("user", user);
+        model.addObject("userName", user.getUsername());
         model.setViewName("profile");
 
         return model;
@@ -139,21 +142,26 @@ public class UserController {
 
         ModelAndView model = new ModelAndView();
         model.addObject("user", user);
+        model.addObject("userName", user.getUsername());
         model.setViewName("changePassword");
         return model;
     }
 
     @RequestMapping("/user/edit")
-    public String updateUser(@RequestParam("id") String id, @RequestParam("firstName") String firstName,
-                             @RequestParam("lastName") String lastName, @RequestParam("biography") String biography) {
+    public ModelAndView updateUser(@RequestParam("id") String id, @RequestParam("firstName") String firstName,
+                                   @RequestParam("lastName") String lastName, @RequestParam("biography") String biography) {
         User user = service.getUser(id);
+        ModelAndView model = new ModelAndView();
+
         if (user != null) {
             user.setFirstname(firstName);
             user.setLastname(lastName);
             user.setBiography(biography);
             service.addOrUpdateUser(user);
         }
-        return "profile";
+        model.addObject("userName", null);
+        model.setViewName("profile");
+        return model;
     }
 
     @PutMapping("/rest/user/edit")
@@ -171,8 +179,8 @@ public class UserController {
     }
 
     @RequestMapping("/changePassword")
-    public String changePassword(HttpServletRequest request, @RequestParam("currentPassword") String currentPassword, @RequestParam("password") String password,
-                                 @RequestParam("repeatNewPassword") String repeatNewPassword) {
+    public ModelAndView changePassword(HttpServletRequest request, @RequestParam("currentPassword") String currentPassword, @RequestParam("password") String password,
+                                       @RequestParam("repeatNewPassword") String repeatNewPassword) {
         HttpSession session = request.getSession();
         User user = service.getUser((String) session.getAttribute("userID"));
         System.out.println(user.toString());
@@ -180,7 +188,10 @@ public class UserController {
             user.setPassword(password);
             service.addOrUpdateUser(user);
         }
-        return "changePassword";
+        ModelAndView model = new ModelAndView();
+        model.setViewName("changePassword");
+        model.addObject("userName", user.getUsername());
+        return model;
     }
 
     @PutMapping("/rest/changePassword")

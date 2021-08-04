@@ -4,10 +4,7 @@ import com.SocialMediaMongodb.model.Album;
 import com.SocialMediaMongodb.model.Artist;
 import com.SocialMediaMongodb.model.Media;
 import com.SocialMediaMongodb.model.User;
-import com.SocialMediaMongodb.repository.AlbumRepository;
-import com.SocialMediaMongodb.repository.ArtistRepository;
-import com.SocialMediaMongodb.repository.MediaRepository;
-import com.SocialMediaMongodb.repository.UserRepository;
+import com.SocialMediaMongodb.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +21,8 @@ public class SocialMediaService {
     private ArtistRepository artistRepository;
     @Autowired
     private MediaRepository mediaRepository;
+    @Autowired
+    private ArtistAlbumRepository artistAlbumRepository;
 
     // *******************************User******************************* //
 
@@ -161,7 +160,9 @@ public class SocialMediaService {
             return true;
         } else
             return false;
-
+    }
+    public void addAlbumArtist(Artist artist){
+        artistAlbumRepository.save(artist);
     }
 
 }

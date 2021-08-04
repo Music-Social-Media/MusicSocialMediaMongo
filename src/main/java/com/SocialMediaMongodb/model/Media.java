@@ -20,14 +20,14 @@ public class Media {
     private String path;
 
 
-    @DBRef
-    private List<User> likes = new ArrayList<>();
+//    @DBRef
+//    private List<User> likes = new ArrayList<>();
+//
+//    @DBRef
+//    private List<User> views = new ArrayList<>();
 
     @DBRef
-    private List<User> views = new ArrayList<>();
-
-    @DBRef
-    private Album album = new Album();
+    private Album album;
 
     public Media() {
 
@@ -99,24 +99,24 @@ public class Media {
         this.path = path;
     }
 
-    public List<User> getLikes() {
-        return likes;
-    }
-
-    public List<User> getViews() {
-        return views;
-    }
-
-    public void setLikes(User user) {
-        if (!likes.contains(user))
-            likes.add(user);
-    }
-
-
-    public void setViews(User user) {
-        if (!views.contains(user))
-            views.add(user);
-    }
+//    public List<User> getLikes() {
+//        return likes;
+//    }
+//
+//    public List<User> getViews() {
+//        return views;
+//    }
+//
+//    public void setLikes(User user) {
+//        if (!likes.contains(user))
+//            likes.add(user);
+//    }
+//
+//
+//    public void setViews(User user) {
+//        if (!views.contains(user))
+//            views.add(user);
+//    }
 
     public Album getAlbum() {
         return album;
@@ -125,6 +125,19 @@ public class Media {
     public void setAlbum(Album album) {
         this.album = album;
     }
+
+//    @Override
+//    public String toString() {
+//        return "Media{" +
+//                "mediaID='" + mediaID + '\'' +
+//                ", name='" + name + '\'' +
+//                ", score=" + score +
+//                ", genre='" + genre + '\'' +
+//                ", length=" + length +
+//                ", publishDate='" + publishDate + '\'' +
+//                ", path='" + path + '\'' +
+//                '}';
+//    }
 
     @Override
     public String toString() {
@@ -136,6 +149,7 @@ public class Media {
                 ", length=" + length +
                 ", publishDate='" + publishDate + '\'' +
                 ", path='" + path + '\'' +
+                ", album=" + album.toString() +
                 '}';
     }
 }

@@ -22,12 +22,12 @@ public class Album {
     public Album() {
     }
 
-
-    @DBRef
-    private List<Artist> compiles = new ArrayList<>();
-
-    @DBRef
-    private List<Media> contain = new ArrayList<>();
+//    @DBRef
+//    private List<Artist> artistsOfAlbum = new ArrayList<>();
+//
+//
+//    @DBRef
+//    private List<Media> mediasOfAlbum = new ArrayList<>();
 
 
     public Album(String name, String publishDate, int score, String genre, String picture) {
@@ -86,29 +86,29 @@ public class Album {
         this.picture = picture;
     }
 
-    public List<Artist> getCompiles() {
-        return compiles;
-    }
-
-    public void setCompiles(Artist artist) {
-        if (!compiles.contains(artist))
-            compiles.add(artist);
-    }
-
-    public List<Media> getContain() {
-        return contain;
-    }
-
-
-    public void setContain(Media media) {
-        if (!contain.contains(media))
-            contain.add(media);
-    }
+//    public List<Artist> getArtistsOfAlbum() {
+//        return artistsOfAlbum;
+//    }
+//
+//    public void setArtistsOfAlbum(Artist artist) {
+//        if (!artistsOfAlbum.contains(artist))
+//            artistsOfAlbum.add(artist);
+//    }
+//
+//    public List<Media> getMediasOfAlbum() {
+//        return mediasOfAlbum;
+//    }
+//
+//
+//    public void setMediasOfAlbum(Media media) {
+//        if (!mediasOfAlbum.contains(media))
+//            mediasOfAlbum.add(media);
+//    }
 
     @Override
     public String toString() {
         return "Album{" +
-                "albumID=" + albumID +
+                "albumID='" + albumID + '\'' +
                 ", name='" + name + '\'' +
                 ", publishDate='" + publishDate + '\'' +
                 ", score=" + score +

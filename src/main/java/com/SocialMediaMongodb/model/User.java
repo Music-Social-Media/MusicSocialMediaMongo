@@ -19,14 +19,14 @@ public class User {
     private String password;
     private String email;
 
-    @DBRef
-    private List<Media> likeMedia = new ArrayList<>();
-
-    @DBRef
-    private List<Media> viewMedia = new ArrayList<>();
-
-    @DBRef
-    private List<Artist> followArtist = new ArrayList<>();
+//    @DBRef
+//    private List<Media> likeMedia;
+//
+//    @DBRef
+//    private List<Media> viewMedia;
+//
+//    @DBRef
+//    private List<Artist> followArtist;
 
 
     public User() {
@@ -106,31 +106,31 @@ public class User {
         this.email = email;
     }
 
-    public List<Media> getLikeMedia() {
-        return likeMedia;
-    }
-
-    public void setLikeMedia(List<Media> likeMedia) {
-        this.likeMedia = likeMedia;
-    }
-
-    public List<Media> getViewMedia() {
-        return viewMedia;
-    }
-
-    public void setViewMedia(Media media) {
-        if (!viewMedia.contains(media))
-            viewMedia.add(media);
-    }
-
-    public List<Artist> getFollowArtist() {
-        return followArtist;
-    }
-
-    public void setFollowArtist(Artist artist) {
-        if (!followArtist.contains(artist))
-            followArtist.add(artist);
-    }
+//    public List<Media> getLikeMedia() {
+//        return likeMedia;
+//    }
+//
+//    public void setLikeMedia(List<Media> likeMedia) {
+//        this.likeMedia = likeMedia;
+//    }
+//
+//    public List<Media> getViewMedia() {
+//        return viewMedia;
+//    }
+//
+//    public void setViewMedia(Media media) {
+//        if (!viewMedia.contains(media))
+//            viewMedia.add(media);
+//    }
+//
+//    public List<Artist> getFollowArtist() {
+//        return followArtist;
+//    }
+//
+//    public void setFollowArtist(Artist artist) {
+//        if (!followArtist.contains(artist))
+//            followArtist.add(artist);
+//    }
 
     @Override
     public String toString() {

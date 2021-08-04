@@ -144,14 +144,10 @@ public class MediaController {
             uploadMedia.setPublishDate(formatter.format(date));
 
 
-            Artist artist = service.getArtist(artistID);
-            if (artist != null) {
-                album.setCompiles(artist);
-            }
-            System.out.println(uploadMedia.toString());
-            System.out.println(album.toString());
-            System.out.println(artist.toString());
             service.addOrUpdateMedia(uploadMedia);
+            System.out.println(uploadMedia);
+            album.setMediasOfAlbum(uploadMedia);
+            service.addOrUpdateAlbum(album);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -198,8 +194,8 @@ public class MediaController {
             System.out.println(media.toString());
             Album album = media.getAlbum();
             System.out.println(album.toString());
-            List<Artist> artist = album.getCompiles();
-            System.out.println(artist.toString());
+//            List<Artist> artist = album.getCompiles();
+//            System.out.println(artist.toString());
         }
 
         ModelAndView model = new ModelAndView();

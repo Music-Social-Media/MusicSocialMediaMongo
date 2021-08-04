@@ -1,6 +1,7 @@
 package com.SocialMediaMongodb.controller;
 
 import com.SocialMediaMongodb.model.Album;
+import com.SocialMediaMongodb.model.Artist;
 import com.SocialMediaMongodb.model.Media;
 import com.SocialMediaMongodb.service.SocialMediaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,22 +22,26 @@ import java.util.List;
 
 @Controller
 public class AlbumController {
-    private static final String ALBUM_IMG_DIR = "src/main/resources/uploads/";
+    private static final String ALBUM_IMG_DIR = "src/main/resources/static/uploads/";
 
     @Autowired
     private SocialMediaService service;
 
 
     @PostMapping("/album/add")
-    public ResponseEntity addAlbum(@RequestParam("file") MultipartFile file, @RequestParam("name") String name, @RequestParam("genre") String genre) throws IOException {
+    public ResponseEntity addAlbum(@RequestParam("file") MultipartFile file, @RequestParam("name") String name,
+                                   @RequestParam("genre") String genre, @RequestParam("artisID") String artisID) throws IOException {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date = new Date();
 
         Path path = Paths.get(ALBUM_IMG_DIR + file.getOriginalFilename());
         Files.write(path, file.getBytes());
 
-        Album album = new Album(name, formatter.format(date), 0, genre, ALBUM_IMG_DIR + file.getOriginalFilename());
+        Album album = new Album(name, formatter.format(date), 0, genre, "static/uploads/" + file.getOriginalFilename());
         service.addOrUpdateAlbum(album);
+
+        Artist artist = service.getArtist(artisID);
+        service.addAlbumArtist(artist);
 
         return new ResponseEntity<>(album, HttpStatus.OK);
     }
