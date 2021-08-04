@@ -4,8 +4,6 @@ package com.SocialMediaMongodb.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Document
@@ -24,7 +22,6 @@ public class Artist {
 //
 //    @DBRef
 //    private List<Album> albumsOfArtist;
-
 
 
     public Artist() {

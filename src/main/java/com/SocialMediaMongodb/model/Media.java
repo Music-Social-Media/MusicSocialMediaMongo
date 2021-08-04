@@ -5,8 +5,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Document
 public class Media {
@@ -15,7 +13,7 @@ public class Media {
     private String name;
     private int score;
     private String genre;
-    private int length;
+    private String length;
     private String publishDate;
     private String path;
 
@@ -33,7 +31,7 @@ public class Media {
 
     }
 
-    public Media(String name, int score, String genre, int length, String publishDate, String path) {
+    public Media(String name, int score, String genre, String length, String publishDate, String path) {
         this.name = name;
         this.score = score;
         this.genre = genre;
@@ -82,11 +80,11 @@ public class Media {
         this.genre = genre;
     }
 
-    public int getLength() {
+    public String getLength() {
         return length;
     }
 
-    public void setLength(int length) {
+    public void setLength(String length) {
         this.length = length;
     }
 
@@ -125,19 +123,6 @@ public class Media {
     public void setAlbum(Album album) {
         this.album = album;
     }
-
-//    @Override
-//    public String toString() {
-//        return "Media{" +
-//                "mediaID='" + mediaID + '\'' +
-//                ", name='" + name + '\'' +
-//                ", score=" + score +
-//                ", genre='" + genre + '\'' +
-//                ", length=" + length +
-//                ", publishDate='" + publishDate + '\'' +
-//                ", path='" + path + '\'' +
-//                '}';
-//    }
 
     @Override
     public String toString() {

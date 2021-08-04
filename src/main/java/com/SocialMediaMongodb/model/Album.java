@@ -19,9 +19,6 @@ public class Album {
     private String picture;
 
 
-    public Album() {
-    }
-
 //    @DBRef
 //    private List<Artist> artistsOfAlbum = new ArrayList<>();
 //
@@ -29,6 +26,19 @@ public class Album {
 //    @DBRef
 //    private List<Media> mediasOfAlbum = new ArrayList<>();
 
+    @DBRef
+    private Artist artist;
+
+    public Artist getArtist() {
+        return artist;
+    }
+
+    public void setArtist(Artist artist) {
+        this.artist = artist;
+    }
+
+    public Album() {
+    }
 
     public Album(String name, String publishDate, int score, String genre, String picture) {
         this.name = name;
@@ -114,6 +124,7 @@ public class Album {
                 ", score=" + score +
                 ", genre='" + genre + '\'' +
                 ", picture='" + picture + '\'' +
+                ", artist='" + artist.toString() + '\'' +
                 '}';
     }
 }

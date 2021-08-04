@@ -72,7 +72,7 @@
                 </div>
                 <div class="col-lg-4">
                     <div class="songs-links">
-                        <a href=""><img src="img/icons/p-1.png" alt=""></a>
+                        <a th:href="@{/artist/get/{artist.artistID}(artist.artistID=${artist.artistID})}"><img src="img/icons/p-1.png" alt=""></a>
                         <a href=""><img src="img/icons/p-2.png" alt=""></a>
                         <a href=""><img src="img/icons/p-3.png" alt=""></a>
                     </div>
@@ -118,8 +118,6 @@
                                 <img src="img/artist.jpg" alt="">
                                 <div class="ad-text">
                                     <h5 th:text="${artist.firstname} + ' ' + ${artist.lastname}"></h5>
-
-                                    <span>Artist/ Songwriter</span>
                                     <p th:text="${artist.biography}"></p>
                                 </div>
                             </div>

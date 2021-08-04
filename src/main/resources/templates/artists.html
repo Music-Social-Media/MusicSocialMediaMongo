@@ -61,7 +61,7 @@
                 <div class="similar-song">
                     <img th:href="@{/artist/get/{artist.artistID}(artist.artistID=${artist.artistID})}" class="ss-thumb"
                          th:src="${artist.picture}" alt="">
-                    <a th:href="@{/artist/get/{artist.artistID}(artist.artistID=${artist.artistID})}"><h4
+                    <a style="text-align: center" th:href="@{/artist/get/{artist.artistID}(artist.artistID=${artist.artistID})}"><h4
                             th:text="${artist.firstname} + ' ' + ${artist.lastname}"></h4></a>
                 </div>
             </div>

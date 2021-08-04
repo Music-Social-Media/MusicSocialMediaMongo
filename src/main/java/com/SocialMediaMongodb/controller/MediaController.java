@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -37,9 +38,15 @@ public class MediaController {
     public ModelAndView getAllMedia() {
         ModelAndView model = new ModelAndView();
         List<Media> medias = service.getAllMedia();
+        List<Media> topMedia = new ArrayList<>();
 
+        if (medias.size() > 3)
+            for (int i = 0; i < 3; i++)
+                topMedia.add(medias.remove(0));
+
+        model.addObject("topMedias", topMedia);
         model.addObject("medias", medias);
-        model.setViewName("medias");
+        model.setViewName("playlist");
         return model;
     }
 
@@ -59,6 +66,7 @@ public class MediaController {
 
         model.addObject("media", media);
         model.addObject("viewCount", viewCount);
+        model.addObject("userName", session.getAttribute("userName"));
         model.setViewName("media");
 
         return model;
@@ -83,10 +91,11 @@ public class MediaController {
 
     public int setView(String userID, String mediaID) {
         User user = service.getUser(userID);
-        List view = user.getViewMedia();
+//        List view = user.getViewMedia();
         service.addOrUpdateUser(user);
 
-        return view.size();
+//        return view.size();
+        return 1;
     }
 
     @GetMapping("/media/download/{id}")
@@ -114,8 +123,7 @@ public class MediaController {
 
     @PostMapping("/media/upload")
     public ResponseEntity addMedia(@RequestParam("file") MultipartFile file, @RequestParam("albumName") String albumName,
-                                   @RequestParam("mediaName") String mediaName, @RequestParam("genre") String genre
-            , @RequestParam("artistID") String artistID) {
+                                   @RequestParam("mediaName") String mediaName, @RequestParam("genre") String genre) {
         Media uploadMedia = new Media();
         if (file.isEmpty()) {
             return (ResponseEntity) ResponseEntity.noContent();
@@ -135,7 +143,7 @@ public class MediaController {
 
             uploadMedia.setName(mediaName);
             uploadMedia.setAlbum(album);
-            uploadMedia.setLength((int) file.getSize());
+            uploadMedia.setLength(convertToMinutes(file.getSize()));
             uploadMedia.setGenre(genre);
             uploadMedia.setPath(file.getOriginalFilename());
 
@@ -143,15 +151,19 @@ public class MediaController {
             Date date = new Date();
             uploadMedia.setPublishDate(formatter.format(date));
 
-
             service.addOrUpdateMedia(uploadMedia);
-            System.out.println(uploadMedia);
-            album.setMediasOfAlbum(uploadMedia);
-            service.addOrUpdateAlbum(album);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
         return new ResponseEntity<>(uploadMedia, HttpStatus.OK);
+    }
+
+    public String convertToMinutes(long length) {
+        int mili = (int) (length / 1000);
+        int sec = (mili / 1000) % 60;
+        int min = (mili / 1000) / 60;
+        return sec + ":" + min;
     }
 
     @DeleteMapping(value = "/media/delete/{id}")
@@ -165,9 +177,8 @@ public class MediaController {
     @PutMapping("/media/update/{id}")
     public ResponseEntity updateMedia(@PathVariable("id") String id, @RequestParam("score") int score,
                                       @RequestParam("name") String name, @RequestParam("genre") String genre,
-                                      @RequestParam("length") int length, @RequestParam("publishDate") String publishDate) {
+                                      @RequestParam("length") String length, @RequestParam("publishDate") String publishDate) {
         Media media = service.getMedia(id);
-        System.out.println(media.toString());
         if (media != null) {
             media.setName(name);
             media.setGenre(genre);
@@ -180,27 +191,49 @@ public class MediaController {
         return new ResponseEntity(null, HttpStatus.NO_CONTENT);
     }
 
+    @RequestMapping("/like/{id}")
+    public ModelAndView like(HttpServletRequest request, @PathVariable("id") String id) {
+        ModelAndView model = new ModelAndView();
+        HttpSession session = request.getSession();
+        User user = service.getUser((String) session.getAttribute("userID"));
+        if (user == null)
+            model.setViewName("login");
+        else {
+            Media media = service.getMedia(id);
+//            user.setLikeMedia(media);
+            service.addOrUpdateUser(user);
+            model.addObject("userName", user.getUsername());
+            model.setViewName("redirect:");
+        }
+
+        return model;
+    }
+
     @RequestMapping("/likedMedia")
     public ModelAndView getLikedMedia(HttpServletRequest request) {
         HttpSession session = request.getSession();
         User user = service.getUser((String) session.getAttribute("userID"));
-        List likes = user.getLikeMedia();
-        int start = 0, end = likes.size();
-        if (likes.size() > 10)
-            start = likes.size() - 10;
-
-        for (int i = start; i < end; i++) {
-            Media media = (Media) likes.get(i);
-            System.out.println(media.toString());
-            Album album = media.getAlbum();
-            System.out.println(album.toString());
-//            List<Artist> artist = album.getCompiles();
-//            System.out.println(artist.toString());
-        }
 
         ModelAndView model = new ModelAndView();
-        model.addObject("likes", likes);
-        model.setViewName("likedMedia");
+
+//        if (user != null) {
+////            List likes = user.getLikeMedia();
+//            int start = 0, end = likes.size();
+//            if (likes.size() > 10)
+//                start = likes.size() - 10;
+//
+//            for (int i = start; i < end; i++) {
+//                Media media = (Media) likes.get(i);
+//                System.out.println(media.toString());
+//                Album album = media.getAlbum();
+//                System.out.println(album.toString());
+////            List<Artist> artist = album.getCompiles();
+////            System.out.println(artist.toString());
+//            }
+//
+//            model.addObject("likes", likes);
+//            model.setViewName("likedMedia");
+//        } else model.setViewName("playlist");
         return model;
     }
 

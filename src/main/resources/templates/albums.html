@@ -62,7 +62,8 @@
                 <div class="similar-song">
                     <img th:href="@{/album/get/{album.albumID}(album.albumID=${album.albumID})}" class="ss-thumb"
                          th:src="${album.picture}" alt="">
-                    <a th:href="@{/album/get/{album.albumID}(album.albumID=${album.albumID})}"><h4
+                    <a style="text-align: center"
+                       th:href="@{/album/get/{album.albumID}(album.albumID=${album.albumID})}"><h4
                             th:text="${album.name}"></h4></a>
                 </div>
             </div>

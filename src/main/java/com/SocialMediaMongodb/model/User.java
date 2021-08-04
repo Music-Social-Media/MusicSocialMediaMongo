@@ -126,7 +126,7 @@ public class User {
 //    public List<Artist> getFollowArtist() {
 //        return followArtist;
 //    }
-//
+
 //    public void setFollowArtist(Artist artist) {
 //        if (!followArtist.contains(artist))
 //            followArtist.add(artist);

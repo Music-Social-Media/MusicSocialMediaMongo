@@ -1,11 +1,10 @@
 package com.SocialMediaMongodb.service;
 
-import com.SocialMediaMongodb.model.Album;
-import com.SocialMediaMongodb.model.Artist;
-import com.SocialMediaMongodb.model.Media;
-import com.SocialMediaMongodb.model.User;
+import com.SocialMediaMongodb.model.*;
 import com.SocialMediaMongodb.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +21,7 @@ public class SocialMediaService {
     @Autowired
     private MediaRepository mediaRepository;
     @Autowired
-    private ArtistAlbumRepository artistAlbumRepository;
+    private FollowRepository followRepository;
 
     // *******************************User******************************* //
 
@@ -130,10 +129,15 @@ public class SocialMediaService {
         } else
             return false;
     }
+
+    public List<Album> getAlbumByArtistID(String id) {
+        return albumRepository.findByArtist(id);
+    }
+
     // *******************************Media******************************* //
 
     public List<Media> getAllMedia() {
-        return mediaRepository.findAll();
+        return mediaRepository.findAll(Sort.by(Sort.Direction.DESC, "publishDate"));
     }
 
     public Media getMedia(String id) {
@@ -145,8 +149,7 @@ public class SocialMediaService {
     }
 
     public List<Media> getMediaByAlbumID(String id) {
-        var medias = (List<Media>) mediaRepository.findByAlbumID(id);
-        return medias;
+        return mediaRepository.findByAlbum(id);
     }
 
     public void addOrUpdateMedia(Media media) {
@@ -161,8 +164,24 @@ public class SocialMediaService {
         } else
             return false;
     }
-    public void addAlbumArtist(Artist artist){
-        artistAlbumRepository.save(artist);
+    // *******************************Follow Artist******************************* //
+
+    public List<FollowArtist> getAllFollows() {
+        return followRepository.findAll();
+    }
+
+    public void addFollow(FollowArtist follow) {
+        followRepository.save(follow);
+    }
+
+    public boolean checkDuplicatedFollows(User user, Artist artist) {
+        FollowArtist follows = followRepository.findByUserAndArtist(user, artist);
+        if (follows == null) {
+            followRepository.save(new FollowArtist(user, artist));
+            return true;
+        }
+        followRepository.delete(follows);
+        return false;
     }
 
 }

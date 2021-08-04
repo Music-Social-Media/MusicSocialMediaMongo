@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,7 +35,7 @@ public class ArtistController {
         Files.write(path, file.getBytes());
 
         if (service.findArtistNOTDuplicate(firstName, lastName, birthDate)) {
-            Artist artist = new Artist(firstName, lastName, "static/uploads/" + file.getOriginalFilename(), biography, birthDate);
+            Artist artist = new Artist(firstName, lastName, "uploads/" + file.getOriginalFilename(), biography, birthDate);
             service.addOrUpdateArtist(artist);
             return new ResponseEntity<>(artist, HttpStatus.OK);
         } else
@@ -66,11 +68,14 @@ public class ArtistController {
 
     @GetMapping(path = "/artists")
     public @ResponseBody
-    ModelAndView getAllArtists() {
+    ModelAndView getAllArtists(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+
         ModelAndView model = new ModelAndView();
         List<Artist> artists = service.getAllArtist();
 
         model.addObject("artists", artists);
+        model.addObject("userName", session.getAttribute("userName"));
         model.setViewName("artists");
         return model;
     }
@@ -82,15 +87,19 @@ public class ArtistController {
     }
 
     @GetMapping(path = "/artist/get/{id}")
-    public ModelAndView getArtist(@PathVariable("id") String id) {
+    public ModelAndView getArtist(@PathVariable("id") String id, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+
         ModelAndView model = new ModelAndView();
         Artist artist = service.getArtist(id);
-//        List<Album> albums = artist.getAlbumsOfArtist();
-//        System.out.println(albums);
-//
-//        model.addObject("artist", artist);
-//        model.addObject("albums", albums);
-//        model.setViewName("artist");
+
+        List<Album> albums = service.getAlbumByArtistID(artist.getArtistID());
+        System.out.println(albums);
+
+        model.addObject("artist", artist);
+        model.addObject("albums", albums);
+        model.addObject("userName", session.getAttribute("userName"));
+        model.setViewName("artist");
 
         return model;
     }

@@ -57,6 +57,7 @@ public class UserController {
 
             HttpSession session = request.getSession();
             session.setAttribute("userID", service.getUserByEmail(email).getUserID());
+            session.setAttribute("userName", username);
 
             model.addObject("userName", username);
             model.setViewName("index");
@@ -78,6 +79,7 @@ public class UserController {
 
             HttpSession session = request.getSession();
             session.setAttribute("userID", service.getUserByEmail(email).getUserID());
+            session.setAttribute("userName", username);
 
             return new ResponseEntity<>(newUser, HttpStatus.OK);
         } else {
@@ -92,6 +94,10 @@ public class UserController {
         User isExitUser = service.getUserByEmail(request.getParameter("email"));
 
         if (isExitUser != null && isExitUser.getPassword().equals(request.getParameter("password"))) {
+            HttpSession session = request.getSession();
+            session.setAttribute("userID", isExitUser.getUserID());
+            session.setAttribute("userName", isExitUser.getUsername());
+
             model.addObject("userName", isExitUser.getUsername());
             model.setViewName("index");
             return model;

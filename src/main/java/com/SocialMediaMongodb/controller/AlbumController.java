@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,12 +39,12 @@ public class AlbumController {
         Path path = Paths.get(ALBUM_IMG_DIR + file.getOriginalFilename());
         Files.write(path, file.getBytes());
 
-        Album album = new Album(name, formatter.format(date), 0, genre, "static/uploads/" + file.getOriginalFilename());
-        service.addOrUpdateAlbum(album);
+        Album album = new Album(name, formatter.format(date), 0, genre, "uploads/" + file.getOriginalFilename());
 
         Artist artist = service.getArtist(artisID);
-        service.addAlbumArtist(artist);
+        album.setArtist(artist);
 
+        service.addOrUpdateAlbum(album);
         return new ResponseEntity<>(album, HttpStatus.OK);
     }
 
@@ -71,16 +73,23 @@ public class AlbumController {
     }
 
     @GetMapping("/album/get/{id}")
-    public ModelAndView getAlbum(@PathVariable("id") String id) {
+    public ModelAndView getAlbum(@PathVariable("id") String id, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+
         ModelAndView model = new ModelAndView();
         Album album = service.getAlbum(id);
 
-        List<Media> media = service.getMediaByAlbumID(id);
+        List<Media> medias = service.getMediaByAlbumID(id);
+        if (medias.size() > 0)
+            model.addObject("media", medias.get(0));
+        model.addObject("medias", medias);
         model.addObject("album", album);
-        if (media.size() > 0)
-            model.addObject("media", media.get(0));
-        model.addObject("medias", media);
+        model.addObject("artist", album.getArtist());
+        model.addObject("userName", session.getAttribute("userName"));
         model.setViewName("album");
+
+        System.out.println(album.getArtist().toString());
+        System.out.println(medias.get(0).toString());
 
         return model;
     }
@@ -92,11 +101,14 @@ public class AlbumController {
     }
 
     @GetMapping("/albums")
-    public ModelAndView getAllAlbum() {
+    public ModelAndView getAllAlbum(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+
         ModelAndView model = new ModelAndView();
         List<Album> albums = service.getAllAlbum();
 
         model.addObject("albums", albums);
+        model.addObject("userName", session.getAttribute("userName"));
         model.setViewName("albums");
         return model;
     }
