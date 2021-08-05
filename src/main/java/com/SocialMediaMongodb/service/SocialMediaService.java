@@ -22,6 +22,12 @@ public class SocialMediaService {
     private MediaRepository mediaRepository;
     @Autowired
     private FollowRepository followRepository;
+    @Autowired
+    private LikedMediaRepository likedMediaRepository;
+    @Autowired
+    private ViewMediaRepository viewMediaRepository;
+    @Autowired
+    private AlbumArtistRepository albumArtistRepository;
 
     // *******************************User******************************* //
 
@@ -130,9 +136,9 @@ public class SocialMediaService {
             return false;
     }
 
-    public List<Album> getAlbumByArtistID(String id) {
-        return albumRepository.findByArtist(id);
-    }
+//    public List<Album> getAlbumByArtistID(String id) {
+//        return albumRepository.findByArtist(id);
+//    }
 
     // *******************************Media******************************* //
 
@@ -182,6 +188,72 @@ public class SocialMediaService {
         }
         followRepository.delete(follows);
         return false;
+    }
+
+    // *******************************Like Media******************************* //
+
+    public List<LikedMedia> getAllLikedMedia() {
+        return likedMediaRepository.findAll();
+    }
+
+    public void addLike(LikedMedia likedMedia) {
+        likedMediaRepository.save(likedMedia);
+    }
+
+    public boolean checkDuplicatedLikes(User user, Media media) {
+        LikedMedia likes = likedMediaRepository.findByUserAndMedia(user, media);
+        if (likes == null) {
+            likedMediaRepository.save(new LikedMedia(user, media));
+            return true;
+        }
+        likedMediaRepository.delete(likes);
+        return false;
+    }
+
+    public List<LikedMedia> getLikedMedias(User user) {
+        return likedMediaRepository.findByUser(user);
+    }
+
+    public List<LikedMedia> getUserLikes(Media media) {
+        return likedMediaRepository.findByMedia(media);
+    }
+    // *******************************View Media******************************* //
+
+    public List<ViewMedia> getAllViewedMedia() {
+        return viewMediaRepository.findAll();
+    }
+
+    public void addView(ViewMedia viewMedia) {
+        viewMediaRepository.save(viewMedia);
+    }
+
+    public void checkDuplicatedView(User user, Media media) {
+        ViewMedia views = viewMediaRepository.findByUserAndMedia(user, media);
+        if (views == null)
+            viewMediaRepository.save(new ViewMedia(user, media));
+    }
+
+    public long getViewsCount(Media media) {
+        List<ViewMedia> views = viewMediaRepository.findByMedia(media);
+        return views.size();
+    }
+
+    // *******************************Album Artist******************************* //
+
+    public List<AlbumArtist> getAllAlbumArtist() {
+        return albumArtistRepository.findAll();
+    }
+
+    public void addAlbumArtist(AlbumArtist albumArtist) {
+        albumArtistRepository.save(albumArtist);
+    }
+
+    public List<AlbumArtist> getByAlbum(Album album) {
+        return albumArtistRepository.findByAlbum(album);
+    }
+
+    public List<AlbumArtist> getByArtist(Artist artist) {
+        return albumArtistRepository.findByArtist(artist);
     }
 
 }

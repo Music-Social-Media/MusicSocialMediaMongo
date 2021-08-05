@@ -26,16 +26,16 @@ public class Album {
 //    @DBRef
 //    private List<Media> mediasOfAlbum = new ArrayList<>();
 
-    @DBRef
-    private Artist artist;
+//    @DBRef
+//    private Artist artist;
 
-    public Artist getArtist() {
-        return artist;
-    }
-
-    public void setArtist(Artist artist) {
-        this.artist = artist;
-    }
+//    public Artist getArtist() {
+//        return artist;
+//    }
+//
+//    public void setArtist(Artist artist) {
+//        this.artist = artist;
+//    }
 
     public Album() {
     }
@@ -114,6 +114,19 @@ public class Album {
 //        if (!mediasOfAlbum.contains(media))
 //            mediasOfAlbum.add(media);
 //    }
+//
+//    @Override
+//    public String toString() {
+//        return "Album{" +
+//                "albumID='" + albumID + '\'' +
+//                ", name='" + name + '\'' +
+//                ", publishDate='" + publishDate + '\'' +
+//                ", score=" + score +
+//                ", genre='" + genre + '\'' +
+//                ", picture='" + picture + '\'' +
+//                ", artist='" + artist.toString() + '\'' +
+//                '}';
+//    }
 
     @Override
     public String toString() {
@@ -124,7 +137,6 @@ public class Album {
                 ", score=" + score +
                 ", genre='" + genre + '\'' +
                 ", picture='" + picture + '\'' +
-                ", artist='" + artist.toString() + '\'' +
                 '}';
     }
 }

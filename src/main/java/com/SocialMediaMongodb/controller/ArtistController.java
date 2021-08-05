@@ -1,6 +1,7 @@
 package com.SocialMediaMongodb.controller;
 
 import com.SocialMediaMongodb.model.Album;
+import com.SocialMediaMongodb.model.AlbumArtist;
 import com.SocialMediaMongodb.model.Artist;
 import com.SocialMediaMongodb.service.SocialMediaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,9 +94,9 @@ public class ArtistController {
         ModelAndView model = new ModelAndView();
         Artist artist = service.getArtist(id);
 
-        List<Album> albums = service.getAlbumByArtistID(artist.getArtistID());
-        System.out.println(albums);
-
+//        List<Album> albums = service.getAlbumByArtist(artist.getArtistID());
+        List<AlbumArtist> albums = service.getByArtist(artist);
+        System.out.println("oooo" + albums);
         model.addObject("artist", artist);
         model.addObject("albums", albums);
         model.addObject("userName", session.getAttribute("userName"));

@@ -122,12 +122,17 @@ public class UserController {
     @GetMapping("/profile")
     public ModelAndView profile(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        User user = service.getUser((String) session.getAttribute("userID"));
+        String userID = (String) session.getAttribute("userID");
 
         ModelAndView model = new ModelAndView();
-        model.addObject("user", user);
-        model.addObject("userName", user.getUsername());
-        model.setViewName("profile");
+        if (userID == null)
+            model.setViewName("login");
+        else {
+            User user = service.getUser(userID);
+            model.addObject("user", user);
+            model.addObject("userName", user.getUsername());
+            model.setViewName("profile");
+        }
 
         return model;
     }
@@ -144,12 +149,18 @@ public class UserController {
     @GetMapping("/user/changePassword")
     public ModelAndView userEditPassword(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        User user = service.getUser((String) session.getAttribute("userID"));
+        String userID = (String) session.getAttribute("userID");
 
         ModelAndView model = new ModelAndView();
-        model.addObject("user", user);
-        model.addObject("userName", user.getUsername());
-        model.setViewName("changePassword");
+
+        if (userID == null)
+            model.setViewName("login");
+        else {
+            User user = service.getUser(userID);
+            model.addObject("user", user);
+            model.addObject("userName", user.getUsername());
+            model.setViewName("changePassword");
+        }
         return model;
     }
 
@@ -226,5 +237,11 @@ public class UserController {
             return new ResponseEntity<>("user deleted successfully!", HttpStatus.OK);
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
+    }
+
+    @RequestMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        request.getSession().invalidate();
+        return "index";
     }
 }

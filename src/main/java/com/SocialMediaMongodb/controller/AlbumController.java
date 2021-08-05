@@ -1,6 +1,7 @@
 package com.SocialMediaMongodb.controller;
 
 import com.SocialMediaMongodb.model.Album;
+import com.SocialMediaMongodb.model.AlbumArtist;
 import com.SocialMediaMongodb.model.Artist;
 import com.SocialMediaMongodb.model.Media;
 import com.SocialMediaMongodb.service.SocialMediaService;
@@ -40,11 +41,9 @@ public class AlbumController {
         Files.write(path, file.getBytes());
 
         Album album = new Album(name, formatter.format(date), 0, genre, "uploads/" + file.getOriginalFilename());
-
-        Artist artist = service.getArtist(artisID);
-        album.setArtist(artist);
-
         service.addOrUpdateAlbum(album);
+        service.addAlbumArtist(new AlbumArtist(service.getAlbumByName(name), service.getArtist(artisID)));
+
         return new ResponseEntity<>(album, HttpStatus.OK);
     }
 
@@ -75,7 +74,6 @@ public class AlbumController {
     @GetMapping("/album/get/{id}")
     public ModelAndView getAlbum(@PathVariable("id") String id, HttpServletRequest request) {
         HttpSession session = request.getSession();
-
         ModelAndView model = new ModelAndView();
         Album album = service.getAlbum(id);
 
@@ -84,12 +82,10 @@ public class AlbumController {
             model.addObject("media", medias.get(0));
         model.addObject("medias", medias);
         model.addObject("album", album);
-        model.addObject("artist", album.getArtist());
+        model.addObject("artists", service.getByAlbum(album));
+//        model.addObject("artist", album.getArtist());
         model.addObject("userName", session.getAttribute("userName"));
         model.setViewName("album");
-
-        System.out.println(album.getArtist().toString());
-        System.out.println(medias.get(0).toString());
 
         return model;
     }

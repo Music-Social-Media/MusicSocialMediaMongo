@@ -16,14 +16,6 @@ public class Media {
     private String length;
     private String publishDate;
     private String path;
-
-
-//    @DBRef
-//    private List<User> likes = new ArrayList<>();
-//
-//    @DBRef
-//    private List<User> views = new ArrayList<>();
-
     @DBRef
     private Album album;
 

@@ -8,6 +8,25 @@
     <link rel="stylesheet" th:href="@{/css/header.css}">
     <link rel="stylesheet" th:href="@{/css/style2.css}"/>
     <link rel="stylesheet" th:href="@{/css/plugins.css}"/>
+    <link th:href="@{/img/favicon.ico}" rel="shortcut icon"/>
+
+    <!-- Google font -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i&display=swap"
+          rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/slicknav.min.css}"/>
+
+    <!-- Main Stylesheets -->
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
     <header class="header-section clearfix">
         <a th:href="@{/}" class="site-logo">
             <img th:src="@{/img/logo.png}" alt="">
@@ -29,7 +48,7 @@
     </header>
 </head>
 <body>
-<div class="hero user-hero">
+<div class="hero user-hero" style="background-color:#08192d;">
     <div class="container bodydirection">
         <div class="row">
             <div class="col-md-12">
@@ -93,6 +112,12 @@
                                 <div class="col-md-6 col-md-6-c form-it input-icons inner-addon right-addon">
                                     <i class="fa fa-envelope"></i>
                                     <input type="email" readonly name="email" th:placeholder="${user.email}">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 col-md-12-c form-it input-icons inner-addon right-addon">
+                                    <i class="fa fa-user"></i>
+                                    <input type="text" name="biography" th:placeholder="${user.biography}">
                                 </div>
                             </div>
                             <div class="row">

@@ -1,9 +1,6 @@
 package com.SocialMediaMongodb.controller;
 
-import com.SocialMediaMongodb.model.Album;
-import com.SocialMediaMongodb.model.Artist;
-import com.SocialMediaMongodb.model.Media;
-import com.SocialMediaMongodb.model.User;
+import com.SocialMediaMongodb.model.*;
 import com.SocialMediaMongodb.service.SocialMediaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -22,9 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class MediaController {
@@ -34,18 +29,29 @@ public class MediaController {
     private SocialMediaService service;
 
 
-    @RequestMapping("/medias")
-    public ModelAndView getAllMedia() {
+    @GetMapping("/medias")
+    public ModelAndView getAllMedia(HttpServletRequest request) {
+        Map<Media, Artist> topMedia = new HashMap();
+        Map<Media, Artist> map = new HashMap();
+        HttpSession session = request.getSession();
+
         ModelAndView model = new ModelAndView();
         List<Media> medias = service.getAllMedia();
-        List<Media> topMedia = new ArrayList<>();
 
         if (medias.size() > 3)
-            for (int i = 0; i < 3; i++)
-                topMedia.add(medias.remove(0));
+            for (int i = 0; i < 3; i++) {
+                Media media = medias.remove(0);
+                topMedia.put(media, service.getByAlbum(media.getAlbum()).get(0).getArtist());
+            }
+
+        for (int i = 0; i < medias.size(); i++) {
+            Media media = medias.get(i);
+            map.put(media, service.getByAlbum(media.getAlbum()).get(0).getArtist());
+        }
 
         model.addObject("topMedias", topMedia);
-        model.addObject("medias", medias);
+        model.addObject("medias", map);
+        model.addObject("userName", session.getAttribute("userName"));
         model.setViewName("playlist");
         return model;
     }
@@ -58,16 +64,18 @@ public class MediaController {
     @GetMapping("/media/{id}")
     public ModelAndView getMedia(HttpServletRequest request, @PathVariable String id) {
         HttpSession session = request.getSession();
-        int viewCount = setView((String) session.getAttribute("userID"), id);
+        long viewCount = 0;
+
+        Media media = service.getMedia(id);
+        if (session.getAttribute("userID") != null)
+            viewCount = setView(service.getUser((String) session.getAttribute("userID")), media);
         System.out.println("view count: " + viewCount);
 
         ModelAndView model = new ModelAndView();
-        Media media = service.getMedia(id);
-
         model.addObject("media", media);
         model.addObject("viewCount", viewCount);
         model.addObject("userName", session.getAttribute("userName"));
-        model.setViewName("media");
+        model.setViewName("playlist");
 
         return model;
     }
@@ -76,26 +84,21 @@ public class MediaController {
     @GetMapping("/rest/media/get/{id}")
     public ResponseEntity getMediaRest(@PathVariable String id, HttpServletRequest request) {
         HttpSession session = request.getSession();
-        int viewCount = setView((String) session.getAttribute("userID"), id);
-        System.out.println("view count: " + viewCount);
 
         Media media = service.getMedia(id);
+        long viewCount = setView(service.getUser((String) session.getAttribute("userID")), media);
+        System.out.println("view count: " + viewCount);
+
         if (media == null)
             return new ResponseEntity(null, HttpStatus.NOT_FOUND);
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType("application/json"))
-                .cacheControl(CacheControl.noCache().mustRevalidate())
-                .body(media);
+        return new ResponseEntity(media, HttpStatus.OK);
     }
 
-    public int setView(String userID, String mediaID) {
-        User user = service.getUser(userID);
-//        List view = user.getViewMedia();
-        service.addOrUpdateUser(user);
-
-//        return view.size();
-        return 1;
+    public long setView(User user, Media media) {
+        if (user != null && media != null)
+            service.checkDuplicatedView(user, media);
+        return service.getViewsCount(media);
     }
 
     @GetMapping("/media/download/{id}")
@@ -189,52 +192,6 @@ public class MediaController {
             return new ResponseEntity(media, HttpStatus.OK);
         }
         return new ResponseEntity(null, HttpStatus.NO_CONTENT);
-    }
-
-    @RequestMapping("/like/{id}")
-    public ModelAndView like(HttpServletRequest request, @PathVariable("id") String id) {
-        ModelAndView model = new ModelAndView();
-        HttpSession session = request.getSession();
-        User user = service.getUser((String) session.getAttribute("userID"));
-        if (user == null)
-            model.setViewName("login");
-        else {
-            Media media = service.getMedia(id);
-//            user.setLikeMedia(media);
-            service.addOrUpdateUser(user);
-            model.addObject("userName", user.getUsername());
-            model.setViewName("redirect:");
-        }
-
-        return model;
-    }
-
-    @RequestMapping("/likedMedia")
-    public ModelAndView getLikedMedia(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        User user = service.getUser((String) session.getAttribute("userID"));
-
-        ModelAndView model = new ModelAndView();
-
-//        if (user != null) {
-////            List likes = user.getLikeMedia();
-//            int start = 0, end = likes.size();
-//            if (likes.size() > 10)
-//                start = likes.size() - 10;
-//
-//            for (int i = start; i < end; i++) {
-//                Media media = (Media) likes.get(i);
-//                System.out.println(media.toString());
-//                Album album = media.getAlbum();
-//                System.out.println(album.toString());
-////            List<Artist> artist = album.getCompiles();
-////            System.out.println(artist.toString());
-//            }
-//
-//            model.addObject("likes", likes);
-//            model.setViewName("likedMedia");
-//        } else model.setViewName("playlist");
-        return model;
     }
 
 

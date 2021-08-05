@@ -58,18 +58,18 @@
     <div class="player-box">
         <div class="tarck-thumb-warp">
             <div class="tarck-thumb">
-<!--                <img src="uploads/5.jpg" th:src="@{album.picture}" alt="">-->
-                                <img src="img/wave-thumb.jpg" th:src="@{img/wave-thumb.jpg}" alt=""/>
+                <!--                <img src="uploads/5.jpg" th:src="@{album.picture}" alt="">-->
+                <img src="img/wave-thumb.jpg" th:src="@{img/wave-thumb.jpg}" alt=""/>
                 <!--                <button onclick="wavesurfer.playPause();" class="wp-play"></button>-->
             </div>
         </div>
         <div class="wave-player-warp">
             <div class="row">
-                <div class="col-lg-8">
+                <div th:each="artist : ${artists}" class="col-lg-8">
                     <div class="wave-player-info">
                         <h2 th:text="${album.name}"></h2>
-                        <a th:href="@{/artist/get/{artist.artistID}(artist.artistID=${artist.artistID})}"><p
-                                th:text="${artist.firstname} + ' ' + ${artist.lastname}"></p>
+                        <a th:href="@{/artist/get/{artist.artist.artistID}(artist.artist.artistID=${artist.artist.artistID})}"><p
+                                th:text="${artist.artist.firstname} + ' ' + ${artist.artist.lastname}"></p>
                         </a></div>
                 </div>
                 <div class="col-lg-4">

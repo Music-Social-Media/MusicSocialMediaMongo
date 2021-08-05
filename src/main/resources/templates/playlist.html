@@ -58,15 +58,17 @@
         <h2 style="margin-bottom:50px; margin-left:20px">Playlist</h2>
         <div class="category-items">
             <div class="row">
-                <div th:each="media : ${topMedias}" class="col-md-4">
+                <div th:each="key : ${topMedias.keySet()}" class="col-md-4">
                     <div class="category-item">
                         <img src="img/playlist/9.jpg" alt="">
                         <div class="ci-text">
-                            <h4 th:text="${media.album.artist.firstname} + ' ' + ${media.album.artist.lastname}"></h4>
-                            <p th:text="${media.name}"></p>
+<!--                            <h4 th:text="${topMedias.get(key).firstname} + ' ' + ${topMedias.get(key).lastname}"></h4>-->
+                            <a th:href="@{/artist/get/{artistID}(artistID=${topMedias.get(key).artistID})}">
+                                <h4 th:text="${topMedias.get(key).firstname} + ' ' + ${topMedias.get(key).lastname}"></h4></a>
+                            <p th:text="${key.name}"></p>
                         </div>
-                        <a th:href="@{/artist/get/{media.album.artist.artistID}(media.album.artist.artistID=${media.album.artist.artistID})}"
-                           class="ci-link"><i class="fa fa-play"></i></a>
+                        <!--                        <a th:href="@{/artist/get/{topMedias.get(key).artistID}(topMedias.get(key).artistID=${topMedias.get(key).artistID})}"-->
+                        <!--                           class="ci-link"><i class="fa fa-play"></i></a>-->
                     </div>
                 </div>
             </div>
@@ -79,14 +81,15 @@
 <section class="songs-section">
     <div class="container">
         <!-- song -->
-        <div th:each="media : ${medias}" class="song-item">
+        <div th:each="key : ${medias.keySet()}" class="song-item">
             <div class="row">
                 <div class="col-lg-4">
                     <div class="song-info-box">
                         <img src="img/songs/1.jpg" alt="">
                         <div class="song-info">
-                            <h4 th:text="${media.album.artist.firstname} + ' ' + ${media.album.artist.lastname}"></h4>
-                            <p th:text="${media.name}"></p>
+                            <a th:href="@{/artist/get/{artistID}(artistID=${medias.get(key).artistID})}">
+                                <h4 th:text="${medias.get(key).firstname} + ' ' + ${medias.get(key).lastname}"></h4></a>
+                            <p th:text="${key.name}"></p>
                         </div>
                     </div>
                 </div>
@@ -118,8 +121,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="jp-duration ml-auto" role="timer" aria-label="duration"><p
-                                                th:text="${media.length}"></p></div>
+                                        <div class="jp-duration ml-auto" role="timer" aria-label="duration">
+                                            <p th:text="${key.length}"></p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -129,13 +133,12 @@
                 <div class="col-lg-2">
                     <div class="songs-links">
                         <a th:href="@{/likedMedia}"><img src="img/icons/p-1.png" alt=""></a>
-                        <a href=""><img src="img/icons/p-2.png" alt=""></a>
-                        <a href=""><img src="img/icons/p-3.png" alt=""></a>
+                        <a th:href="@{/media/download/{mediaID}(mediaID=${key.mediaID})}"><img
+                                src="img/icons/p-2.png" alt=""></a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 </section>
 <!-- Songs section end -->
