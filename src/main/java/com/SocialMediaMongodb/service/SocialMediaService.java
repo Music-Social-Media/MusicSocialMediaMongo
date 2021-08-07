@@ -186,7 +186,7 @@ public class SocialMediaService {
             followRepository.save(new FollowArtist(user, artist));
             return true;
         }
-        followRepository.delete(follows);
+        followRepository.deleteById(follows.getFollowID());
         return false;
     }
 
@@ -206,7 +206,7 @@ public class SocialMediaService {
             likedMediaRepository.save(new LikedMedia(user, media));
             return true;
         }
-        likedMediaRepository.delete(likes);
+        likedMediaRepository.deleteById(likes.getId());
         return false;
     }
 

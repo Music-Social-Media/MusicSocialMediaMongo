@@ -18,12 +18,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 public class ArtistController {
 
-    private static final String ALBUM_IMG_DIR = "src/main/resources/static/uploads/";
+    private static final String ALBUM_IMG_DIR = "src/main/resources/static/artists/";
 
     @Autowired
     private SocialMediaService service;
@@ -36,7 +37,7 @@ public class ArtistController {
         Files.write(path, file.getBytes());
 
         if (service.findArtistNOTDuplicate(firstName, lastName, birthDate)) {
-            Artist artist = new Artist(firstName, lastName, "uploads/" + file.getOriginalFilename(), biography, birthDate);
+            Artist artist = new Artist(firstName, lastName, "artists/" + file.getOriginalFilename(), biography, birthDate);
             service.addOrUpdateArtist(artist);
             return new ResponseEntity<>(artist, HttpStatus.OK);
         } else
@@ -94,9 +95,11 @@ public class ArtistController {
         ModelAndView model = new ModelAndView();
         Artist artist = service.getArtist(id);
 
-//        List<Album> albums = service.getAlbumByArtist(artist.getArtistID());
-        List<AlbumArtist> albums = service.getByArtist(artist);
-        System.out.println("oooo" + albums);
+        List<AlbumArtist> albumArtists = service.getByArtist(artist);
+        List<Album> albums = new ArrayList<>();
+        for (int i = 0; i < albumArtists.size(); i++)
+            albums.add(albumArtists.get(i).getAlbum());
+
         model.addObject("artist", artist);
         model.addObject("albums", albums);
         model.addObject("userName", session.getAttribute("userName"));
@@ -104,7 +107,6 @@ public class ArtistController {
 
         return model;
     }
-
     @GetMapping(path = "/rest/artist/get/{id}")
     public ResponseEntity getArtistRest(@PathVariable("id") String id) {
         Artist artist = service.getArtist(id);

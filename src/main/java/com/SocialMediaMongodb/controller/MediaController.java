@@ -73,9 +73,14 @@ public class MediaController {
 
         ModelAndView model = new ModelAndView();
         model.addObject("media", media);
+        List<AlbumArtist> albumArtists = service.getByAlbum(media.getAlbum());
+        List<Artist> artists = new ArrayList<>();
+        for (int i = 0; i < albumArtists.size(); i++)
+            artists.add(albumArtists.get(i).getArtist());
+        model.addObject("artists", artists);
         model.addObject("viewCount", viewCount);
         model.addObject("userName", session.getAttribute("userName"));
-        model.setViewName("playlist");
+        model.setViewName("media");
 
         return model;
     }
@@ -108,6 +113,7 @@ public class MediaController {
 
         Path path = Paths.get(BASE_DIR + media.getPath());
         String mimeType = Files.probeContentType(path);
+
         Resource resource = null;
         try {
             resource = new UrlResource(path.toUri());
@@ -117,7 +123,6 @@ public class MediaController {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.valueOf(mimeType))
-//                .contentType(MediaType.parseMediaType("application/json"))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + mediaName + "\"")
                 .contentLength(resource.contentLength())
                 .cacheControl(CacheControl.noCache().mustRevalidate())
@@ -194,5 +199,31 @@ public class MediaController {
         return new ResponseEntity(null, HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/testtt/{p}")
+    public ModelAndView g(HttpServletRequest request, @PathVariable("p")String p) {
+//        ModelAndView modelAndView = new ModelAndView();
+//        Artist artist = service.getArtist("610d9282f8253b55cc3fdbb8");
+////        Media media = service.g
+//        modelAndView.addObject("artist", artist);
+//        modelAndView.setViewName("test");
+
+        HttpSession session = request.getSession();
+
+        ModelAndView model = new ModelAndView();
+        Artist artist = service.getArtist(p);
+
+        List<AlbumArtist> albumArtists = service.getByArtist(artist);
+        List<Album> albums = new ArrayList<>();
+        for (int i = 0; i < albumArtists.size(); i++)
+            albums.add(albumArtists.get(i).getAlbum());
+        System.out.println(artist);
+
+        model.addObject("artist", artist);
+        model.addObject("albums", albums);
+        model.addObject("userName", session.getAttribute("userName"));
+        model.setViewName("test");
+
+        return model;
+    }
 
 }

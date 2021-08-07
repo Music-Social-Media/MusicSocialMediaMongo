@@ -20,27 +20,28 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Controller
 public class AlbumController {
-    private static final String ALBUM_IMG_DIR = "src/main/resources/static/uploads/";
+    private static final String ALBUM_IMG_DIR = "src/main/resources/static/albums/";
 
     @Autowired
     private SocialMediaService service;
 
 
     @PostMapping("/album/add")
-    public ResponseEntity addAlbum(@RequestParam("file") MultipartFile file, @RequestParam("name") String name,
+    public ResponseEntity addAlbum(@RequestParam("file") MultipartFile file, @RequestParam("name") String name, @RequestParam("publishDate") String publishDate,
                                    @RequestParam("genre") String genre, @RequestParam("artisID") String artisID) throws IOException {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        Date date = new Date();
+//        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+//        Date date = new Date();
 
         Path path = Paths.get(ALBUM_IMG_DIR + file.getOriginalFilename());
         Files.write(path, file.getBytes());
 
-        Album album = new Album(name, formatter.format(date), 0, genre, "uploads/" + file.getOriginalFilename());
+        Album album = new Album(name, publishDate, 0, genre, "albums/" + file.getOriginalFilename());
         service.addOrUpdateAlbum(album);
         service.addAlbumArtist(new AlbumArtist(service.getAlbumByName(name), service.getArtist(artisID)));
 
@@ -78,12 +79,17 @@ public class AlbumController {
         Album album = service.getAlbum(id);
 
         List<Media> medias = service.getMediaByAlbumID(id);
+
         if (medias.size() > 0)
             model.addObject("media", medias.get(0));
         model.addObject("medias", medias);
         model.addObject("album", album);
-        model.addObject("artists", service.getByAlbum(album));
-//        model.addObject("artist", album.getArtist());
+        List<AlbumArtist> albumArtist = service.getByAlbum(album);
+        List<Artist> artists = new ArrayList<>();
+        for (int i = 0; i < albumArtist.size(); i++)
+            artists.add(albumArtist.get(i).getArtist());
+        System.out.println(artists);
+        model.addObject("artists", artists);
         model.addObject("userName", session.getAttribute("userName"));
         model.setViewName("album");
 

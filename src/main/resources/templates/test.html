@@ -8,7 +8,8 @@
     <meta name="keywords" content="music, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link th:href="@{/img/favicon.ico}" rel="shortcut icon"/>
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="shortcut icon"/>
 
     <!-- Google font -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i&display=swap"
@@ -58,25 +59,20 @@
     <div class="player-box">
         <div class="tarck-thumb-warp">
             <div class="tarck-thumb">
-                <!--                <img src="uploads/5.jpg" th:src="@{album.picture}" alt="">-->
-                <img src="img/wave-thumb.jpg" th:src="@{img/wave-thumb.jpg}" alt=""/>
-                <!--                <button onclick="wavesurfer.playPause();" class="wp-play"></button>-->
+                <img th:src="${artist.picture}" alt="">
             </div>
         </div>
         <div class="wave-player-warp">
             <div class="row">
-                <div th:each="artist : ${artists}" class="col-lg-8">
+                <div class="col-lg-8">
                     <div class="wave-player-info">
-                        <h2 th:text="${album.name}"></h2>
-                        <a th:href="@{/artist/get/{artistID}(artistID=${artist.artistID})}"><p
-                                th:text="${artist.firstname} + ' ' + ${artist.lastname}"></p>
-                        </a></div>
+                        <h2 th:text="${artist.firstname} + ' ' + ${artist.lastname}"></h2>
+                    </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="songs-links">
-                        <a href=""><img src="img/icons/p-1.png" alt=""></a>
-                        <a href=""><img src="img/icons/p-2.png" alt=""></a>
-                        <a href=""><img src="img/icons/p-3.png" alt=""></a>
+                        <a th:href="@{/follow/{artistID}(artistID=${artist.artistID})}"><img
+                                src="img/icons/p-1.png" alt=""></a>
                     </div>
                 </div>
             </div>
@@ -101,37 +97,33 @@
 <section class="songs-details-section">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-9">
+            <div class="col-lg-11">
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="song-details-box">
-                            <h3>About the Album</h3>
+                            <h3>About the Artist</h3>
                             <div class="artist-details">
-                                <img th:src="${album.picture}" alt="">
+                                <img src="img/artist.jpg" alt="">
                                 <div class="ad-text">
-                                    <h5 th:text="${album.name}"></h5>
-                                </div>
-                                <div class="ad-text">
-                                    <p th:text="${album.genre}"></p>
-                                </div>
-                                <div class="ad-text">
-                                    <p th:text="${album.publishDate}"></p>
+                                    <h5 th:text="${artist.firstname} + ' ' + ${artist.lastname}"></h5>
+                                    <p th:text="${artist.biography}"></p>
+                                    <p th:text="${artist.birthdate}"></p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="song-details-box">
-                            <h3>Media Details</h3>
+                            <h3>Albums Details</h3>
                             <!-- song -->
-                            <div th:each="media : ${medias}" class="song-item">
+                            <div th:each="album : ${albums}" class="song-item">
                                 <div class="row">
-                                    <div class="col-xl-5 col-lg-12 col-md-5">
+                                    <div class="col-xl-4 col-lg-12 col-md-5">
                                         <div class="song-info-box">
                                             <img src="img/songs/1.jpg" alt="">
                                             <div class="song-info">
-                                                <a th:href="@{/media/{mediaID}(mediaID=${media.mediaID})}">
-                                                    <h4 th:text="${media.name}"></h4></a>
+                                                <h4 th:text="${album.name}"></h4>
+                                                <p th:text="${album.publishDate}"></p>
                                             </div>
                                         </div>
                                     </div>
@@ -158,17 +150,23 @@
                                                                     <div>
                                                                         <div class="jp-play-bar">
                                                                             <div class="jp-current-time" role="timer"
-                                                                                 aria-label="time">
+                                                                                 aria-label="time">0:00
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="ml-auto" role="timer"
-                                                                 aria-label="duration">
-                                                                <p th:text="${media.length}"></p>
+                                                            <div class="jp-duration ml-auto" role="timer"
+                                                                 aria-label="duration">00:00
                                                             </div>
                                                         </div>
+                                                    </div>
+                                                    <div class="jp-no-solution">
+                                                        <span>Update Required</span>
+                                                        To play the media you will need to either update your browser to
+                                                        a recent version or update your <a
+                                                            href="http://get.adobe.com/flashplayer/" target="_blank">Flash
+                                                        plugin</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -176,7 +174,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- song -->
+
                         </div>
                     </div>
                 </div>
@@ -185,8 +183,6 @@
     </div>
 </section>
 <!-- Songs details section -->
-
-
 <!-- Footer section -->
 <footer class="footer-section">
     <div class="container">
@@ -228,7 +224,7 @@
                 </div>
             </div>
             <div class="col-xl-6 col-lg-5 order-lg-1">
-                <img th:src="@{/img/logo.png}" alt="">
+                <img src="img/logo.png" alt="">
                 <div class="copyright">
                     <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                     Copyright &copy;<script>document.write(new Date().getFullYear());</script>
@@ -249,20 +245,20 @@
 <!-- Footer section end -->
 
 <!--====== Javascripts & Jquery ======-->
-<script th:src="@{js/jquery-3.2.1.min.js}"></script>
-<script th:src="@{/js/bootstrap.min.js}"></script>
-<script th:src="@{/js/jquery.slicknav.min.js}"></script>
-<script th:src="@{/js/owl.carousel.min.js}"></script>
-<script th:src="@{/js/mixitup.min.js}"></script>
-<script th:src="@{/js/main.js}"></script>
+<script src="js/jquery-3.2.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.slicknav.min.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<script src="js/mixitup.min.js"></script>
+<script src="js/main.js"></script>
 
 <!-- Audio Players js -->
-<script th:src="@{/js/jquery.jplayer.min.js}"></script>
-<script th:src="@{/js/wavesurfer.min.js}"></script>
+<script src="js/jquery.jplayer.min.js"></script>
+<script src="js/wavesurfer.min.js"></script>
 
 <!-- Audio Players Initialization -->
-<script th:src="@{/js/WaveSurferInit.js}"></script>
-<script th:src="@{/js/jplayerInit.js}"></script>
+<script src="js/WaveSurferInit.js"></script>
+<script src="js/jplayerInit.js"></script>
 
 </body>
 </html>

@@ -27,17 +27,17 @@ public class JoinController {
         return new ResponseEntity(service.getAllFollows(), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/follow/{id}")
+    @RequestMapping("/follow/{id}")
     public String follow(@PathVariable("id") String id, HttpServletRequest request) {
         HttpSession session = request.getSession();
-        User user = service.getUser((String) session.getAttribute("userID"));
-        if (user == null)
+        String userID = (String) session.getAttribute("userID");
+        if (userID == null)
             return "login";
-
+        User user = service.getUser(userID);
         Artist artist = service.getArtist(id);
         service.checkDuplicatedFollows(user, artist);
 
-        return "redirect:";
+        return "index";
     }
 
     @PostMapping(value = "/rest/follow/{id}")
@@ -54,15 +54,20 @@ public class JoinController {
 
 
     @RequestMapping("/like/{id}")
-    public String like(HttpServletRequest request, @PathVariable("id") String id) {
+    public ModelAndView like(HttpServletRequest request, @PathVariable("id") String id) {
         ModelAndView model = new ModelAndView();
-        HttpSession session = request.getSession();
-        User user = service.getUser((String) session.getAttribute("userID"));
-        if (user == null)
-            return "login";
 
-        service.checkDuplicatedLikes(user, service.getMedia(id));
-        return "redirect:";
+        HttpSession session = request.getSession();
+        String userID = (String) session.getAttribute("userID");
+        if (userID != null) {
+            User user = service.getUser(userID);
+
+            service.checkDuplicatedLikes(user, service.getMedia(id));
+            model.addObject("userName", session.getAttribute("userName"));
+            model.setViewName("likedMedia");
+        } else
+            model.setViewName("login");
+        return model;
     }
 
     @PostMapping("/rest/like/{id}")
@@ -105,9 +110,10 @@ public class JoinController {
     @GetMapping("/rest/likedMedia")
     public ResponseEntity getLikedMediaRest(HttpServletRequest request) {
         HttpSession session = request.getSession();
-        User user = service.getUser((String) session.getAttribute("userID"));
+        String userID = (String) session.getAttribute("userID");
 
-        if (user != null) {
+        if (userID != null) {
+            User user = service.getUser(userID);
             List<Media> medias = new ArrayList<>();
             List<LikedMedia> likes = service.getLikedMedias(user);
             int start = 0, end = likes.size();
@@ -116,7 +122,6 @@ public class JoinController {
 
             for (int i = start; i < end; i++)
                 medias.add(likes.get(i).getMedia());
-
             return new ResponseEntity(medias, HttpStatus.OK);
         }
         return new ResponseEntity("you should login!", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
@@ -130,10 +135,11 @@ public class JoinController {
     @GetMapping("/rest/userLikes/{id}")
     public ResponseEntity getUserLikesRest(HttpServletRequest request, @PathVariable("id") String id) {
         HttpSession session = request.getSession();
-        User user = service.getUser((String) session.getAttribute("userID"));
-        Media media = service.getMedia(id);
+        String userID = (String) session.getAttribute("userID");
 
-        if (user != null) {
+        if (userID != null) {
+            Media media = service.getMedia(id);
+
             List<User> users = new ArrayList<>();
             List<LikedMedia> likes = service.getUserLikes(media);
             for (int i = 0; i < likes.size(); i++)
@@ -142,6 +148,26 @@ public class JoinController {
             return new ResponseEntity(users, HttpStatus.OK);
         }
         return new ResponseEntity("you should login!", HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+    }
+
+    @GetMapping("/userLikes/{id}")
+    public ModelAndView getUserLikes(HttpServletRequest request, @PathVariable("id") String id) {
+        ModelAndView model = new ModelAndView();
+        HttpSession session = request.getSession();
+        String userID = (String) session.getAttribute("userID");
+
+        if (userID != null) {
+            Media media = service.getMedia(id);
+
+            List<User> users = new ArrayList<>();
+            List<LikedMedia> likes = service.getUserLikes(media);
+            for (int i = 0; i < likes.size(); i++)
+                users.add(likes.get(i).getUser());
+
+            model.setViewName("");
+        } else
+            model.setViewName("login");
+        return model;
     }
 
     @GetMapping("view/getAll")
