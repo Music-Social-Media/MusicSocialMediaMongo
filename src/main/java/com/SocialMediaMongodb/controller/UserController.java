@@ -61,8 +61,8 @@ public class UserController {
 
             model.addObject("userName", username);
             model.setViewName("index");
-        }
-        model.setViewName("signup");
+        } else
+            model.setViewName("signup");
         return model;
     }
 
