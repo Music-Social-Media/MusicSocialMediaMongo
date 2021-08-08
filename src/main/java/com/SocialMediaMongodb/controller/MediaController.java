@@ -139,7 +139,6 @@ public class MediaController {
 
         try {
             // Get the file and save it somewhere
-            byte[] bytes = file.getBytes();
             Path path = Paths.get(BASE_DIR + file.getOriginalFilename());
             Files.write(path, file.getBytes());
 
@@ -200,7 +199,7 @@ public class MediaController {
     }
 
     @GetMapping("/testtt/{p}")
-    public ModelAndView g(HttpServletRequest request, @PathVariable("p")String p) {
+    public ModelAndView g(HttpServletRequest request, @PathVariable("p") String p) {
 //        ModelAndView modelAndView = new ModelAndView();
 //        Artist artist = service.getArtist("610d9282f8253b55cc3fdbb8");
 ////        Media media = service.g

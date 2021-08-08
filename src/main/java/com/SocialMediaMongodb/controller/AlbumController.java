@@ -88,7 +88,6 @@ public class AlbumController {
         List<Artist> artists = new ArrayList<>();
         for (int i = 0; i < albumArtist.size(); i++)
             artists.add(albumArtist.get(i).getArtist());
-        System.out.println(artists);
         model.addObject("artists", artists);
         model.addObject("userName", session.getAttribute("userName"));
         model.setViewName("album");
